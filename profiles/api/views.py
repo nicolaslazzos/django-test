@@ -4,7 +4,7 @@ from profiles.models import Profile
 from .serializers import ProfileSerializer
 
 class ProfileCreateListView(mixins.CreateModelMixin, generics.ListAPIView):
-  lookup_field = 'profileId'
+  lookup_field = 'clientId'
   serializer_class = ProfileSerializer
   
   def get_queryset(self):
@@ -15,7 +15,7 @@ class ProfileCreateListView(mixins.CreateModelMixin, generics.ListAPIView):
     return self.create(request, *args, **kwargs)
 
 class ProfileRetrieveUpdateView(generics.RetrieveUpdateAPIView):
-  lookup_field = 'profileId'
+  lookup_field = 'clientId'
   serializer_class = ProfileSerializer
   
   def get_queryset(self):
