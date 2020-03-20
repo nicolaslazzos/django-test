@@ -1,0 +1,26 @@
+from rest_framework import generics, mixins
+
+from profiles.models import Profile
+from .serializers import ProfileSerializer
+
+class ProfileCreateListView(mixins.CreateModelMixin, generics.ListAPIView):
+  lookup_field = 'profileId'
+  serializer_class = ProfileSerializer
+  
+  def get_queryset(self):
+    qs = Profile.objects.all()
+    return qs.filter(softDelete=None)
+
+  def post(self, request, *args, **kwargs):
+    return self.create(request, *args, **kwargs)
+
+class ProfileRetrieveUpdateView(generics.RetrieveUpdateAPIView):
+  lookup_field = 'profileId'
+  serializer_class = ProfileSerializer
+  
+  def get_queryset(self):
+    return Profile.objects.all()
+
+  # def get_object(self):
+  #   pk = self.kwargs.get('profileId')
+  #   return Profiles.objects.get(pk=pk)
