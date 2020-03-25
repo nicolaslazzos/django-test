@@ -1,8 +1,9 @@
 from django.urls import path
 
-from .views import ProvinceRetrieveUpdateView, ProvinceCreateListView
+from .views import ProvinceCreateListView, ProvinceIdListView, ProvinceNameListView
 
 urlpatterns = [
     path('', ProvinceCreateListView.as_view(), name='province-create'),
-    path('<pk>/', ProvinceRetrieveUpdateView.as_view(), name='province-ru')
+    path('id/', ProvinceIdListView.as_view(), name='province-rid'),
+    path('name/', ProvinceNameListView.as_view(), name='province-rname')
 ]

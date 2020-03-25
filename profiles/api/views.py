@@ -4,11 +4,12 @@ from profiles.models import Profile
 from .serializers import ProfileSerializer
 
 class ProfileCreateListView(mixins.CreateModelMixin, generics.ListAPIView):
-  lookup_field = 'clientId'
+  # lookup_field = 'clientId'
   serializer_class = ProfileSerializer
   
   def get_queryset(self):
     qs = Profile.objects.all()
+    # qs = Profile.objects.select_related('provinceId')
     return qs.filter(softDelete=None)
 
   def post(self, request, *args, **kwargs):
@@ -19,7 +20,9 @@ class ProfileRetrieveUpdateView(generics.RetrieveUpdateAPIView):
   serializer_class = ProfileSerializer
   
   def get_queryset(self):
-    return Profile.objects.all()
+    qs = Profile.objects.all()
+    # qs = Profile.objects.select_related('provinceId')
+    return qs.filter(softDelete=None)
 
   # def get_object(self):
   #   pk = self.kwargs.get('profileId')
