@@ -1,16 +1,15 @@
 from rest_framework import serializers
 from profiles.models import Profile
 from provinces.api.serializers import ProvinceSerializer
-from provinces.models import Province
 
 
-class ProfileSerializer(serializers.ModelSerializer):
-    province = ProvinceSerializer(read_only=True, source='provinceId')
+class ProfileReadSerializer(serializers.ModelSerializer):
+    province = ProvinceSerializer(read_only=False, source='provinceId')
+    clientId = serializers.CharField(source='id')
 
     class Meta:
         model = Profile
         fields = [
-            'id',
             'clientId',
             'firstName',
             'lastName',
@@ -18,6 +17,24 @@ class ProfileSerializer(serializers.ModelSerializer):
             'phone',
             'profilePicture',
             'province',
+            'commerceId',
+            'softDelete'
+        ]
+
+
+class ProfileCreateUpdateSerializer(serializers.ModelSerializer):
+    clientId = serializers.CharField(source='id')
+
+    class Meta:
+        model = Profile
+        fields = [
+            'clientId',
+            'firstName',
+            'lastName',
+            'email',
+            'phone',
+            'profilePicture',
+            'provinceId',
             'commerceId',
             'softDelete'
         ]

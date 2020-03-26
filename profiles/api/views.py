@@ -1,29 +1,35 @@
-from rest_framework import generics, mixins
+from rest_framework import generics
 
 from profiles.models import Profile
-from .serializers import ProfileSerializer
+from .serializers import ProfileReadSerializer, ProfileCreateUpdateSerializer
 
-class ProfileCreateListView(mixins.CreateModelMixin, generics.ListAPIView):
-  # lookup_field = 'clientId'
-  serializer_class = ProfileSerializer
-  
-  def get_queryset(self):
-    qs = Profile.objects.all()
-    # qs = Profile.objects.select_related('provinceId')
-    return qs.filter(softDelete=None)
 
-  def post(self, request, *args, **kwargs):
-    return self.create(request, *args, **kwargs)
+class ProfileListAPIView(generics.ListAPIView):
+    # lookup_field = 'clientId'
+    serializer_class = ProfileReadSerializer
 
-class ProfileRetrieveUpdateView(generics.RetrieveUpdateAPIView):
-  lookup_field = 'clientId'
-  serializer_class = ProfileSerializer
-  
-  def get_queryset(self):
-    qs = Profile.objects.all()
-    # qs = Profile.objects.select_related('provinceId')
-    return qs.filter(softDelete=None)
+    def get_queryset(self):
+        qs = Profile.objects.all()
+        # qs = Profile.objects.select_related('provinceId')
+        return qs.filter(softDelete=None)
 
-  # def get_object(self):
-  #   pk = self.kwargs.get('profileId')
-  #   return Profiles.objects.get(pk=pk)
+
+class ProfileCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
+    lookup_field = 'clientId'
+    serializer_class = ProfileCreateUpdateSerializer
+
+    def get_queryset(self):
+        qs = Profile.objects.all()
+        return qs.filter(softDelete=None)
+
+    # def post(self, request, *args, **kwargs):
+    #   return self.create(request, *args, **kwargs)
+
+
+class ProfileRetrieveAPIView(generics.RetrieveAPIView):
+    lookup_field = 'clientId'
+    serializer_class = ProfileReadSerializer
+
+    def get_queryset(self):
+        qs = Profile.objects.all()
+        return qs.filter(softDelete=None)

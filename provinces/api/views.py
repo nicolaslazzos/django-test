@@ -4,7 +4,6 @@ from provinces.models import Province
 from .serializers import ProvinceSerializer, ProvinceIdSerializer, ProvinceNameSerializer
 
 class ProvinceCreateListView(mixins.CreateModelMixin, generics.ListAPIView):
-  # lookup_field = 'id'
   serializer_class = ProvinceSerializer
   
   def get_queryset(self):

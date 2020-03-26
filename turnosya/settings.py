@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'rest_framework',
     # own
     'profiles',
-    'provinces'
+    'provinces',
+    'areas',
+    'commerces'
 ]
 
 MIDDLEWARE = [
