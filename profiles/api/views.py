@@ -5,7 +5,6 @@ from .serializers import ProfileReadSerializer, ProfileCreateUpdateSerializer
 
 
 class ProfileListAPIView(generics.ListAPIView):
-    # lookup_field = 'clientId'
     serializer_class = ProfileReadSerializer
 
     def get_queryset(self):
@@ -15,7 +14,7 @@ class ProfileListAPIView(generics.ListAPIView):
 
 
 class ProfileCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
-    lookup_field = 'clientId'
+    lookup_url_kwarg = 'clientId'
     serializer_class = ProfileCreateUpdateSerializer
 
     def get_queryset(self):
@@ -27,7 +26,7 @@ class ProfileCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView)
 
 
 class ProfileRetrieveAPIView(generics.RetrieveAPIView):
-    lookup_field = 'clientId'
+    lookup_url_kwarg = 'clientId'
     serializer_class = ProfileReadSerializer
 
     def get_queryset(self):

@@ -6,7 +6,8 @@ class AreaSerializer(serializers.ModelSerializer):
     model = Area
     fields = [
       'areaId',
-      'name'
+      'name',
+      'image'
     ]
 
 class AreaIdSerializer(serializers.ModelSerializer):
