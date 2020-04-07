@@ -18,3 +18,10 @@ class Profile(models.Model):
     def __str__(self):
         return self.email
 
+class Favorite(models.Model):
+    clientId = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    commerceId = models.ForeignKey(Commerce, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.clientId) + ' - ' + str(self.commerceId)
+
