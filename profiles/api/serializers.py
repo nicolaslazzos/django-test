@@ -53,7 +53,8 @@ class FavoriteReadSerializer(serializers.ModelSerializer):
         model = Favorite
         fields = ['commerce']
 
-class FavoriteCommerceIdSerializer(serializers.ModelSerializer):
+class FavoriteIdSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
-        fields = ['commerceId']
+        fields = ['id', 'clientId', 'commerceId']
+        read_only_fields = ['id']

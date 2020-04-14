@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import ProfileListAPIView, ProfileCreateUpdateAPIView, ProfileRetrieveAPIView, FavoriteListAPIView, FavoriteCommerceIdListAPIView
+from .views import ProfileListAPIView, ProfileCreateUpdateAPIView, ProfileRetrieveAPIView, FavoriteListAPIView, FavoriteIdListAPIView, FavoriteCreateDeleteAPIView
 
 urlpatterns = [
     # PROFILES
@@ -10,5 +10,7 @@ urlpatterns = [
     path('profiles/update/<clientId>/', ProfileCreateUpdateAPIView.as_view(), name='profile-update'),
     # FAVORITES
     path('favorites/', FavoriteListAPIView.as_view(), name='favorite-list'),
-    path('favorites/id/', FavoriteCommerceIdListAPIView.as_view(), name='favorite-id-list')
+    path('favorites/delete/<id>/', FavoriteCreateDeleteAPIView.as_view(), name='favorite-delete'),
+    path('favorites/create/', FavoriteCreateDeleteAPIView.as_view(), name='favorite-create'),
+    path('favorites/id/', FavoriteIdListAPIView.as_view(), name='favorite-id-list')
 ]

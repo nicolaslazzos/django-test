@@ -1,7 +1,7 @@
 from rest_framework import generics
 
 from profiles.models import Profile, Favorite
-from .serializers import ProfileReadSerializer, ProfileCreateUpdateSerializer, FavoriteReadSerializer, FavoriteCommerceIdSerializer
+from .serializers import ProfileReadSerializer, ProfileCreateUpdateSerializer, FavoriteReadSerializer, FavoriteIdSerializer
 
 
 # PROFILE VIEWS
@@ -45,9 +45,16 @@ class FavoriteListAPIView(generics.ListAPIView):
         clientId = self.request.query_params.get('clientId', None)
         return Favorite.objects.filter(clientId=clientId)
 
-class FavoriteCommerceIdListAPIView(generics.ListAPIView):
-    serializer_class = FavoriteCommerceIdSerializer
+class FavoriteIdListAPIView(generics.ListAPIView):
+    serializer_class = FavoriteIdSerializer
 
     def get_queryset(self):
         clientId = self.request.query_params.get('clientId', None)
         return Favorite.objects.filter(clientId=clientId)
+
+class FavoriteCreateDeleteAPIView(generics.CreateAPIView, generics.DestroyAPIView):
+    lookup_url_kwarg = 'id'
+    serializer_class = FavoriteIdSerializer
+
+    def get_queryset(self):
+        return Favorite.objects.all()
