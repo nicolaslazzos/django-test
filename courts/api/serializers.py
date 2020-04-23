@@ -10,11 +10,29 @@ class CourtTypeSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
 
+class CourtTypeIdSerializer(serializers.ModelSerializer):
+    value = serializers.IntegerField(source='id')
+    label = serializers.CharField(source='name')
+
+    class Meta:
+        model = CourtType
+        fields = ['value', 'label']
+
+
 class GroundTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroundType
         fields = ['id', 'name']
         read_only_fields = ['id']
+
+
+class GroundTypeIdSerializer(serializers.ModelSerializer):
+    value = serializers.IntegerField(source='id')
+    label = serializers.CharField(source='name')
+
+    class Meta:
+        model = GroundType
+        fields = ['value', 'label']
 
 
 class CourtReadSerializer(serializers.ModelSerializer):
