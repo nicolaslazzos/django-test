@@ -37,7 +37,9 @@ class GroundTypeIdSerializer(serializers.ModelSerializer):
 
 class CourtReadSerializer(serializers.ModelSerializer):
     courtType = CourtTypeSerializer(read_only=True, source='courtTypeId')
+    court = serializers.IntegerField(source='courtTypeId.id')
     groundType = GroundTypeSerializer(read_only=True, source='groundTypeId')
+    ground = serializers.IntegerField(source='groundTypeId.id')
 
     class Meta:
         model = Court
@@ -46,8 +48,12 @@ class CourtReadSerializer(serializers.ModelSerializer):
             'commerceId',
             'name',
             'description',
+            'courtTypeId',
             'courtType',
+            'court',
+            'groundTypeId',
             'groundType',
+            'ground',
             'price',
             'lightPrice',
             'lightHour',
