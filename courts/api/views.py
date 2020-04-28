@@ -1,5 +1,4 @@
 from rest_framework import generics
-from django.db.models import Q
 
 from courts.models import CourtType, GroundType, Court
 from courts.api.serializers import CourtTypeSerializer, CourtTypeIdSerializer, GroundTypeIdSerializer, GroundTypeSerializer, CourtReadSerializer, CourtCreateUpdateSerializer
@@ -13,21 +12,16 @@ class CourtListAPIView(generics.ListAPIView):
         return param != '' and param is not None
 
     def get_queryset(self):
-        qs = Court.objects.all().filter(softDelete=None).order_by('name')
+        qs = Court.objects.filter(softDelete=None).order_by('name')
 
         commerceId = self.request.query_params.get('commerceId', None)
         courtTypeId = self.request.query_params.get('courtTypeId', None)
-        userSearch = self.request.query_params.get('contains', None)
 
         if self.is_param_valid(commerceId):
             qs = qs.filter(commerceId=commerceId)
 
         if self.is_param_valid(courtTypeId):
             qs = qs.filter(courtTypeId=courtTypeId)
-
-        if self.is_param_valid(userSearch):
-            qs = qs.filter(Q(name__icontains=userSearch) |
-                           Q(description__icontains=userSearch))
 
         return qs
 
@@ -37,8 +31,7 @@ class CourtRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = CourtReadSerializer
 
     def get_queryset(self):
-        qs = Court.objects.all()
-        return qs.filter(softDelete=None)
+        return Court.objects.filter(softDelete=None)
 
 
 class CourtCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
@@ -46,34 +39,40 @@ class CourtCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
     serializer_class = CourtCreateUpdateSerializer
 
     def get_queryset(self):
-        qs = Court.objects.all()
-        return qs.filter(softDelete=None)
+        return Court.objects.filter(softDelete=None)
 
 
 class CourtTypeListAPIView(generics.ListAPIView):
     serializer_class = CourtTypeSerializer
 
+    def is_param_valid(self, param):
+        return param != '' and param is not None
+
     def get_queryset(self):
-        qs = CourtType.objects.all().filter(softDelete=None).order_by('name')
+        qs = CourtType.objects.filter(softDelete=None).order_by('name')
+        
+        commerceId = self.request.query_params.get('commerceId', None)
+
+        if self.is_param_valid(commerceId):
+            commerce_courts = Court.objects.filter(softDelete=None, commerceId=commerceId)
+            qs = qs.filter(id__in=commerce_courts)
+
         return qs
 
 class CourtTypeIdListAPIView(generics.ListAPIView):
     serializer_class = CourtTypeIdSerializer
 
     def get_queryset(self):
-        qs = CourtType.objects.all().filter(softDelete=None).order_by('name')
-        return qs
+        return CourtType.objects.filter(softDelete=None).order_by('name')
 
 class GroundTypeListAPIView(generics.ListAPIView):
     serializer_class = GroundTypeSerializer
 
     def get_queryset(self):
-        qs = GroundType.objects.all().filter(softDelete=None).order_by('name')
-        return qs
+        return GroundType.objects.filter(softDelete=None).order_by('name')
 
 class GroundTypeIdListAPIView(generics.ListAPIView):
     serializer_class = GroundTypeIdSerializer
 
     def get_queryset(self):
-        qs = GroundType.objects.all().filter(softDelete=None).order_by('name')
-        return qs
+        return GroundType.objects.filter(softDelete=None).order_by('name')

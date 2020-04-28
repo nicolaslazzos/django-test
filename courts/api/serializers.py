@@ -45,7 +45,6 @@ class CourtReadSerializer(serializers.ModelSerializer):
         model = Court
         fields = [
             'id',
-            'commerceId',
             'name',
             'description',
             'courtTypeId',

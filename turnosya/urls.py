@@ -23,5 +23,6 @@ urlpatterns = [
     path('api/provinces/', include(('provinces.api.urls', 'api-provinces'), namespace='api-provinces')),
     path('api/areas/', include(('areas.api.urls', 'api-areas'), namespace='api-areas')),
     path('api/commerces/', include(('commerces.api.urls', 'api-commerces'), namespace='api-commerces')),
-    path('api/', include(('courts.api.urls', 'api-courts'), namespace='api-courts'))
+    path('api/', include(('courts.api.urls', 'api-courts'), namespace='api-courts')),
+    path('api/schedules/', include(('schedules.api.urls', 'api-schedules'), namespace='api-schedules'))
 ]
