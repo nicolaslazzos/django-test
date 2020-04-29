@@ -1,4 +1,5 @@
 from rest_framework import generics
+from django.db.models import Q
 
 from schedules.models import Schedule, WorkShift, Day
 from schedules.api.serializers import WorkShiftSerializer, ScheduleSerializer
@@ -14,17 +15,17 @@ class ScheduleListAPIView(generics.ListAPIView):
         qs = Schedule.objects.filter(softDelete=None)
 
         commerceId = self.request.query_params.get('commerceId', None)
-        startDate = self.request.query_params.get('startDate', None)
-        endDate = self.request.query_params.get('endDate', None)
+        date = self.request.query_params.get('date', None)
+        selectedDate = self.request.query_params.get('selectedDate', None)
 
         if self.is_param_valid(commerceId):
             qs = qs.filter(commerceId=commerceId)
 
-        if self.is_param_valid(startDate):
-            qs.filter(startDate__lte=startDate)
+        if self.is_param_valid(date):
+            qs.filter(endDate__gt=date)
 
-        if self.is_param_valid(startDate):
-            qs.filter(endDate__gt=startDate)
+        if self.is_param_valid(selectedDate):
+            qs.filter(startDate__lte=selectedDate, Q(endDate=None) | Q(endDate__gt=selectedDate))
 
         return qs
 
