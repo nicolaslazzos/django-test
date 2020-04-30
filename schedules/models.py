@@ -6,6 +6,7 @@ from commerces.models import Commerce
 class Schedule(models.Model):
   commerceId = models.ForeignKey(Commerce, on_delete=models.CASCADE)
   # employeeId = models.ForeignKey(Employee, on_delete=models.CASCADE)
+  reservationMinLength = models.SmallIntegerField()
   startDate = models.DateTimeField(blank=True, null=True)
   endDate = models.DateTimeField(blank=True, null=True)
   softDelete = models.DateTimeField(blank=True, null=True)

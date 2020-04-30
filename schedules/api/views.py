@@ -22,15 +22,15 @@ class ScheduleListAPIView(generics.ListAPIView):
             qs = qs.filter(commerceId=commerceId)
 
         if self.is_param_valid(date):
-            qs.filter(endDate__gt=date)
+            qs = qs.filter(endDate__gt=date)
 
         if self.is_param_valid(selectedDate):
-            qs.filter(startDate__lte=selectedDate, Q(endDate=None) | Q(endDate__gt=selectedDate))
+            qs = qs.filter(Q(startDate__gte=selectedDate), Q(endDate=None) | Q(endDate__gt=selectedDate))
 
         return qs
 
 
-class ScheduleCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
+class ScheduleCreateUpdateDestroyAPIView(generics.CreateAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
     serializer_class = ScheduleSerializer
     lookup_field = 'id'
 
@@ -55,7 +55,7 @@ class WorkShiftListAPIView(generics.ListAPIView):
         return qs
 
 
-class WorkShiftCreateUpdateView(generics.CreateAPIView, generics.UpdateAPIView):
+class WorkShiftCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
     serializer_class = WorkShiftSerializer
     lookup_field = 'id'
 
