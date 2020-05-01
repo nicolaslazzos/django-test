@@ -8,8 +8,8 @@ urlpatterns = [
     # por ejemplo, ya que sino al hacer un post a la url profiles/create, si primero esta profiles/<clientId>, piensa que la palabra "create" es un clientId
     path('profiles/', ProfileListAPIView.as_view(), name='profile-list'),
     path('profiles/create/', ProfileCreateUpdateAPIView.as_view(), name='profile-create'),
-    path('profiles/update/<clientId>/', ProfileCreateUpdateAPIView.as_view(), name='profile-update'),
-    path('profiles/<clientId>/', ProfileRetrieveAPIView.as_view(), name='profile-read'),
+    path('profiles/update/<profileId>/', ProfileCreateUpdateAPIView.as_view(), name='profile-update'),
+    path('profiles/<profileId>/', ProfileRetrieveAPIView.as_view(), name='profile-read'),
     # FAVORITES
     path('favorites/', FavoriteListAPIView.as_view(), name='favorite-list'),
     path('favorites/create/', FavoriteCreateDeleteAPIView.as_view(), name='favorite-create'),

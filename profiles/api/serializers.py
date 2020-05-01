@@ -46,15 +46,8 @@ class ProfileCreateUpdateSerializer(serializers.ModelSerializer):
 
 # FAVORITES SERIALIZERS
 
-class FavoriteReadSerializer(serializers.ModelSerializer):
-    commerce = CommerceReadSerializer(read_only=True, source='commerceId')
-
-    class Meta:
-        model = Favorite
-        fields = ['commerce']
-
 class FavoriteIdSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
-        fields = ['id', 'clientId', 'commerceId']
+        fields = ['id', 'profileId', 'commerceId']
         read_only_fields = ['id']

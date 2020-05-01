@@ -12,7 +12,7 @@ class CommerceListAPIView(generics.ListAPIView):
         return param != '' and param is not None
 
     def get_queryset(self):
-        qs = Commerce.objects.all().filter(softDelete=None)
+        qs = Commerce.objects.filter(softDelete__isnull=True)
 
         areaId = self.request.query_params.get('areaId', None)
         provinceId = self.request.query_params.get('provinceId', None)
@@ -35,8 +35,7 @@ class CommerceCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView
     serializer_class = CommerceCreateUpdateSerializer
 
     def get_queryset(self):
-        qs = Commerce.objects.all()
-        return qs.filter(softDelete=None)
+        return Commerce.objects.filter(softDelete__isnull=True)
 
 
 class CommerceRetrieveAPIView(generics.RetrieveAPIView):
@@ -44,5 +43,4 @@ class CommerceRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = CommerceReadSerializer
 
     def get_queryset(self):
-        qs = Commerce.objects.all()
-        return qs.filter(softDelete=None)
+        return Commerce.objects.filter(softDelete__isnull=True)

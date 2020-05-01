@@ -4,8 +4,10 @@ from provinces.models import Province
 from commerces.models import Commerce
 
 # Create your models here.
+
+
 class Profile(models.Model):
-    id = models.CharField(max_length=100, primary_key=True)
+    id = models.CharField(max_length=100, primary_key=True, unique=True)
     firstName = models.CharField(max_length=50)
     lastName = models.CharField(max_length=50)
     email = models.EmailField()
@@ -18,10 +20,10 @@ class Profile(models.Model):
     def __str__(self):
         return self.email
 
+
 class Favorite(models.Model):
-    clientId = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    profileId = models.ForeignKey(Profile, on_delete=models.CASCADE)
     commerceId = models.ForeignKey(Commerce, on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.clientId) + ' - ' + str(self.commerceId)
-
+        return str(self.profileId) + ' - ' + str(self.commerceId)

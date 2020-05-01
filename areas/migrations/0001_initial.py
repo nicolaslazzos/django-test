@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Area',
             fields=[
-                ('areaId', models.CharField(max_length=100, primary_key=True, serialize=False, unique=True)),
+                ('id', models.CharField(max_length=100, primary_key=True, serialize=False, unique=True)),
                 ('name', models.CharField(max_length=100)),
                 ('softDelete', models.DateTimeField(blank=True, null=True)),
             ],

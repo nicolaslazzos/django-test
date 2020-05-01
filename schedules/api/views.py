@@ -12,7 +12,7 @@ class ScheduleListAPIView(generics.ListAPIView):
         return param != '' and param is not None
 
     def get_queryset(self):
-        qs = Schedule.objects.filter(softDelete=None)
+        qs = Schedule.objects.filter(softDelete__isnull=True)
 
         commerceId = self.request.query_params.get('commerceId', None)
         date = self.request.query_params.get('date', None)
@@ -22,10 +22,10 @@ class ScheduleListAPIView(generics.ListAPIView):
             qs = qs.filter(commerceId=commerceId)
 
         if self.is_param_valid(date):
-            qs = qs.filter(endDate__gt=date)
+            qs = qs.filter(Q(endDate__gt=date) | Q(endDate__isnull=True))
 
         if self.is_param_valid(selectedDate):
-            qs = qs.filter(Q(startDate__gte=selectedDate), Q(endDate=None) | Q(endDate__gt=selectedDate))
+            qs = qs.filter(Q(startDate__lte=selectedDate), Q(endDate__isnull=True) | Q(endDate__gt=selectedDate))
 
         return qs
 
@@ -35,7 +35,7 @@ class ScheduleCreateUpdateDestroyAPIView(generics.CreateAPIView, generics.Update
     lookup_field = 'id'
 
     def get_queryset(self):
-        return Schedule.objects.filter(softDelete=None)
+        return Schedule.objects.filter(softDelete__isnull=True)
 
 
 class WorkShiftListAPIView(generics.ListAPIView):
