@@ -11,11 +11,19 @@ from commerces.api.serializers import CommerceReadSerializer
 
 class ProfileListAPIView(generics.ListAPIView):
     serializer_class = ProfileReadSerializer
+    
+    def is_param_valid(self, param):
+        return param != '' and param is not None
 
     def get_queryset(self):
-        qs = Profile.objects.all()
-        # qs = Profile.objects.select_related('provinceId')
-        return qs.filter(softDelete__isnull=True)
+        qs = Profile.objects.filter(softDelete__isnull=True)
+
+        email = self.request.query_params.get('email', None)
+
+        if self.is_param_valid(email):
+            qs = qs.filter(email=email)
+
+        return qs
 
 
 class ProfileCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
@@ -25,9 +33,6 @@ class ProfileCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView)
     def get_queryset(self):
         qs = Profile.objects.all()
         return qs.filter(softDelete__isnull=True)
-
-    # def post(self, request, *args, **kwargs):
-    #   return self.create(request, *args, **kwargs)
 
 
 class ProfileRetrieveAPIView(generics.RetrieveAPIView):

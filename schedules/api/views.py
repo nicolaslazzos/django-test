@@ -45,7 +45,7 @@ class WorkShiftListAPIView(generics.ListAPIView):
         return param != '' and param is not None
 
     def get_queryset(self):
-        qs = WorkShift.objects.all()
+        qs = WorkShift.objects.filter(softDelete__isnull=True)
 
         scheduleId = self.request.query_params.get('scheduleId', None)
 
@@ -60,4 +60,4 @@ class WorkShiftCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIVie
     lookup_field = 'id'
 
     def get_queryset(self):
-        return WorkShift.objects.all()
+        return WorkShift.objects.filter(softDelete__isnull=True)

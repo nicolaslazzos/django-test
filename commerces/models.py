@@ -3,7 +3,7 @@ from django.db import models
 from provinces.models import Province
 from areas.models import Area
 
-# Create your models here.
+
 class Commerce(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
@@ -13,7 +13,8 @@ class Commerce(models.Model):
     phone = models.CharField(max_length=50)
     address = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
-    provinceId = models.ForeignKey(Province, on_delete=models.SET_NULL, null=True)
+    provinceId = models.ForeignKey(
+        Province, on_delete=models.SET_NULL, null=True)
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
     profilePicture = models.URLField(max_length=300, blank=True, null=True)
@@ -22,5 +23,3 @@ class Commerce(models.Model):
 
     def __str__(self):
         return self.name
-
-

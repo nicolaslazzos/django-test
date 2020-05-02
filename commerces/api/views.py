@@ -2,8 +2,14 @@ from rest_framework import generics
 from django.db.models import Q
 
 from commerces.models import Commerce
+from employees.models import Employee
+from courts.models import Court
+from schedules.models import Schedule, WorkShift
+from profiles.models import Profile
+
 from .serializers import CommerceReadSerializer, CommerceCreateUpdateSerializer
 
+import datetime
 
 class CommerceListAPIView(generics.ListAPIView):
     serializer_class = CommerceReadSerializer
@@ -17,6 +23,7 @@ class CommerceListAPIView(generics.ListAPIView):
         areaId = self.request.query_params.get('areaId', None)
         provinceId = self.request.query_params.get('provinceId', None)
         userSearch = self.request.query_params.get('contains', None)
+        cuit = self.request.query_params.get('cuit', None)
 
         if self.is_param_valid(areaId):
             qs = qs.filter(areaId=areaId)
@@ -26,6 +33,9 @@ class CommerceListAPIView(generics.ListAPIView):
 
         if self.is_param_valid(userSearch):
             qs = qs.filter(Q(name__icontains=userSearch) | Q(description__icontains=userSearch))
+            
+        if self.is_param_valid(cuit):
+            qs = qs.filter(cuit=cuit)
 
         return qs
 
@@ -36,6 +46,31 @@ class CommerceCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView
 
     def get_queryset(self):
         return Commerce.objects.filter(softDelete__isnull=True)
+        
+class CommerceDeleteAPIView(generics.DestroyAPIView):
+    lookup_url_kwarg = 'commerceId'
+    serializer_class = CommerceCreateUpdateSerializer
+
+    def get_queryset(self):
+        return Commerce.objects.filter(softDelete__isnull=True)
+
+    def delete(self, request, pk):
+        commerce_object = Commerce.objects.get(commerceId=pk)
+        delete_date = datetime.datetime.now()
+        serializer = self.serializer_class(commerce_object, data={ 'softDelete': delete_date }, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            Employee.objects.filter(softDelete__isnull=True, commerceId=pk).update(softDelete=delete_date)
+            Courts.objects.filter(softDelete__isnull=True, commerceId=pk).update(softDelete=delete_date)
+            schedules = Schedule.objects.filter(softDelete__isnull=True, commerceId=pk)
+            schedules.update(softDelete=delete_date)
+            WorkShift.objects.filter(softDelete__isnull=True, scheduleId__in=schedules).update(softDelete=delete_date)
+            Profile.objects.filter(softDelete__isnull=True, commerceId=pk).update(commerceId=None)
+            
+            return JsonResponse(code=201, data=serializer.data)
+
+        return JsonResponse(code=400, data="wrong parameters")
 
 
 class CommerceRetrieveAPIView(generics.RetrieveAPIView):
