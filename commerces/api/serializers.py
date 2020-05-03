@@ -29,12 +29,10 @@ class CommerceReadSerializer(serializers.ModelSerializer):
     ]
 
 class CommerceCreateUpdateSerializer(serializers.ModelSerializer):
-  commerceId = serializers.IntegerField(source='id')
-
   class Meta:
     model = Commerce
     fields = [
-      'commerceId',
+      'id',
       'name',
       'description',
       'areaId',
@@ -50,3 +48,4 @@ class CommerceCreateUpdateSerializer(serializers.ModelSerializer):
       'headerPicture',
       'softDelete'
     ]
+    read_only_fields = ['id']

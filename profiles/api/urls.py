@@ -1,11 +1,9 @@
 from django.urls import path
 
-from .views import ProfileListAPIView, ProfileCreateUpdateAPIView, ProfileRetrieveAPIView, FavoriteListAPIView, FavoriteIdListAPIView, FavoriteCreateDeleteAPIView
+from .views import ProfileListAPIView, ProfileCreateUpdateAPIView, ProfileRetrieveAPIView, ProfileWorkplacesListAPIView, FavoriteListAPIView, FavoriteIdListAPIView, FavoriteCreateDeleteAPIView
 
 urlpatterns = [
     # PROFILES 
-    # importa el orden en el proceso de ver si la url coincide, por lo que en este caso profiles/<clientId> conviene que este despues de profiles/create
-    # por ejemplo, ya que sino al hacer un post a la url profiles/create, si primero esta profiles/<clientId>, piensa que la palabra "create" es un clientId
     path('profiles/', ProfileListAPIView.as_view(), name='profile-list'),
     path('profiles/create/', ProfileCreateUpdateAPIView.as_view(), name='profile-create'),
     path('profiles/update/<profileId>/', ProfileCreateUpdateAPIView.as_view(), name='profile-update'),
@@ -15,4 +13,6 @@ urlpatterns = [
     path('favorites/create/', FavoriteCreateDeleteAPIView.as_view(), name='favorite-create'),
     path('favorites/id/', FavoriteIdListAPIView.as_view(), name='favorite-id-list'),
     path('favorites/delete/<id>/', FavoriteCreateDeleteAPIView.as_view(), name='favorite-delete'),
+    # WORKPLACES
+    path('workplaces/', ProfileWorkplacesListAPIView.as_view(), name='profile-workplaces'),
 ]

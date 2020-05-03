@@ -20,7 +20,7 @@ class Employee(models.Model):
     roleId = models.ForeignKey(Role, on_delete=models.CASCADE)
     inviteDate = models.DateTimeField()
     startDate = models.DateTimeField(blank=True, null=True)
-    visible = models.BooleanField(default=True)
+    visible = models.BooleanField(default=True, blank=True, null=True)
     softDelete = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):

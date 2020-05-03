@@ -2,6 +2,7 @@ from rest_framework import generics
 
 from profiles.models import Profile, Favorite
 from commerces.models import Commerce
+from employees.models import Employee
 
 from .serializers import ProfileReadSerializer, ProfileCreateUpdateSerializer, FavoriteIdSerializer
 from commerces.api.serializers import CommerceReadSerializer
@@ -11,7 +12,7 @@ from commerces.api.serializers import CommerceReadSerializer
 
 class ProfileListAPIView(generics.ListAPIView):
     serializer_class = ProfileReadSerializer
-    
+
     def is_param_valid(self, param):
         return param != '' and param is not None
 
@@ -42,6 +43,28 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
     def get_queryset(self):
         qs = Profile.objects.all()
         return qs.filter(softDelete__isnull=True)
+
+
+# WORKPLACES
+
+class ProfileWorkplacesListAPIView(generics.ListAPIView):
+    serializer_class = CommerceReadSerializer
+
+    def is_param_valid(self, param):
+        return param != '' and param is not None
+
+    def get_queryset(self):
+        profileId = self.request.query_params.get('profileId', None)
+        commerceId = None
+
+        if self.is_param_valid(profileId):
+            profile_object = Profile.objects.get(id=profileId)
+            employees_objects = Employee.objects.filter(softDelete__isnull=True, profileId=profileId).values_list('commerceId')
+
+            if profile_object.commerceId is not None:
+                commerceId = profile_object.commerceId.id
+
+            return Commerce.objects.filter(softDelete__isnull=True, id__in=employees_objects).exclude(id=commerceId)
 
 
 # FAVORITES VIEWS

@@ -27,7 +27,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'commerceId',
-            # 'employeeId',
+            'employeeId',
             'startDate',
             'endDate',
             'reservationMinLength'
