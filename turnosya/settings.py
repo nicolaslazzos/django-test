@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     # own
     'profiles',
     'provinces',
-    'areas',
     'commerces',
     'courts',
     'schedules',

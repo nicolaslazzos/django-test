@@ -1,7 +1,35 @@
 from rest_framework import serializers
-from commerces.models import Commerce
+
+from commerces.models import Commerce, Area
+
 from provinces.api.serializers import ProvinceSerializer
-from areas.api.serializers import AreaSerializer
+
+# AREAS
+
+class AreaSerializer(serializers.ModelSerializer):
+  areaId = serializers.CharField(source='id')
+
+  class Meta:
+    model = Area
+    fields = [
+      'areaId',
+      'name',
+      'image'
+    ]
+
+class AreaIdSerializer(serializers.ModelSerializer):
+  value = serializers.CharField(source='id')
+  label = serializers.CharField(source='name')
+  
+  class Meta:
+    model = Area
+    fields = [
+      'value',
+      'label'
+    ]
+
+
+# COMMERCES
 
 class CommerceReadSerializer(serializers.ModelSerializer):
   commerceId = serializers.IntegerField(source='id')
@@ -25,14 +53,12 @@ class CommerceReadSerializer(serializers.ModelSerializer):
       'longitude',
       'profilePicture',
       'headerPicture',
-      'softDelete'
     ]
 
 class CommerceCreateUpdateSerializer(serializers.ModelSerializer):
   class Meta:
     model = Commerce
     fields = [
-      'id',
       'name',
       'description',
       'areaId',
@@ -48,4 +74,3 @@ class CommerceCreateUpdateSerializer(serializers.ModelSerializer):
       'headerPicture',
       'softDelete'
     ]
-    read_only_fields = ['id']

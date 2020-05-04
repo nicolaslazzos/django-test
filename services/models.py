@@ -10,7 +10,7 @@ class Service(models.Model):
     commerceId = models.ForeignKey(Commerce, on_delete=models.CASCADE)
     duration = models.SmallIntegerField()
     price = models.FloatField()
-    employeesIds = models.ManyToManyField(Employee, blank=True, null=True)
+    employeesIds = models.ManyToManyField(Employee, blank=True)
     softDelete = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):

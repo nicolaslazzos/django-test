@@ -1,7 +1,16 @@
 from django.db import models
 
 from provinces.models import Province
-from areas.models import Area
+
+
+class Area(models.Model):
+    id = models.CharField(max_length=100, primary_key=True, unique=True)
+    name = models.CharField(max_length=100)
+    image = models.URLField(max_length=300, blank=True, null=True)
+    softDelete = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Commerce(models.Model):
@@ -13,8 +22,7 @@ class Commerce(models.Model):
     phone = models.CharField(max_length=50)
     address = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
-    provinceId = models.ForeignKey(
-        Province, on_delete=models.SET_NULL, null=True)
+    provinceId = models.ForeignKey(Province, on_delete=models.SET_NULL, null=True)
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
     profilePicture = models.URLField(max_length=300, blank=True, null=True)

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Commerce
+from .models import Commerce, Area
 
-# Register your models here.
 admin.site.register(Commerce)
+admin.site.register(Area)

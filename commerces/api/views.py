@@ -1,15 +1,18 @@
 from rest_framework import generics
 from django.db.models import Q
 
-from commerces.models import Commerce
+from commerces.models import Commerce, Area
 from employees.models import Employee
 from courts.models import Court
 from schedules.models import Schedule, WorkShift
 from profiles.models import Profile
 
-from .serializers import CommerceReadSerializer, CommerceCreateUpdateSerializer
+from .serializers import CommerceReadSerializer, CommerceCreateUpdateSerializer, AreaSerializer, AreaIdSerializer
 
 import datetime
+
+
+# COMMERCES
 
 class CommerceListAPIView(generics.ListAPIView):
     serializer_class = CommerceReadSerializer
@@ -47,6 +50,7 @@ class CommerceCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView
     def get_queryset(self):
         return Commerce.objects.filter(softDelete__isnull=True)
         
+
 class CommerceDeleteAPIView(generics.DestroyAPIView):
     lookup_url_kwarg = 'commerceId'
     serializer_class = CommerceCreateUpdateSerializer
@@ -79,3 +83,21 @@ class CommerceRetrieveAPIView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         return Commerce.objects.filter(softDelete__isnull=True)
+
+
+# AREAS
+
+class AreaListAPIView(generics.ListAPIView):
+  serializer_class = AreaSerializer
+  
+  def get_queryset(self):
+    qs = Area.objects.all()
+    return qs.filter(softDelete__isnull=True)
+
+
+class AreaIdListAPIView(generics.ListAPIView):
+  serializer_class = AreaIdSerializer
+  
+  def get_queryset(self):
+    qs = Area.objects.all()
+    return qs.filter(softDelete__isnull=True)
