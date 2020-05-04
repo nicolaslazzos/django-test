@@ -8,13 +8,11 @@ from commerces.api.serializers import CommerceReadSerializer
 
 class ProfileReadSerializer(serializers.ModelSerializer):
     province = ProvinceSerializer(read_only=True, source='provinceId')
-    clientId = serializers.CharField(source='id') # provisorio
     profileId = serializers.CharField(source='id')
 
     class Meta:
         model = Profile
         fields = [
-            'clientId',
             'profileId',
             'firstName',
             'lastName',

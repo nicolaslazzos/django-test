@@ -25,5 +25,6 @@ urlpatterns = [
     path('api/commerces/', include(('commerces.api.urls', 'api-commerces'), namespace='api-commerces')),
     path('api/', include(('courts.api.urls', 'api-courts'), namespace='api-courts')),
     path('api/schedules/', include(('schedules.api.urls', 'api-schedules'), namespace='api-schedules')),
-    path('api/employees/', include(('employees.api.urls', 'api-employees'), namespace='api-employees'))
+    path('api/employees/', include(('employees.api.urls', 'api-employees'), namespace='api-employees')),
+    path('api/services/', include(('services.api.urls', 'api-services'), namespace='api-services')),
 ]

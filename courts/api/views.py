@@ -12,7 +12,7 @@ class CourtListAPIView(generics.ListAPIView):
         return param != '' and param is not None
 
     def get_queryset(self):
-        qs = Court.objects.filter(softDelete=None).order_by('name')
+        qs = Court.objects.filter(softDelete__isnull=True).order_by('name')
 
         commerceId = self.request.query_params.get('commerceId', None)
         courtTypeId = self.request.query_params.get('courtTypeId', None)
@@ -31,7 +31,7 @@ class CourtRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = CourtReadSerializer
 
     def get_queryset(self):
-        return Court.objects.filter(softDelete=None)
+        return Court.objects.filter(softDelete__isnull=True)
 
 
 class CourtCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
@@ -39,7 +39,7 @@ class CourtCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
     serializer_class = CourtCreateUpdateSerializer
 
     def get_queryset(self):
-        return Court.objects.filter(softDelete=None)
+        return Court.objects.filter(softDelete__isnull=True)
 
 
 class CourtTypeListAPIView(generics.ListAPIView):
@@ -49,12 +49,12 @@ class CourtTypeListAPIView(generics.ListAPIView):
         return param != '' and param is not None
 
     def get_queryset(self):
-        qs = CourtType.objects.filter(softDelete=None).order_by('name')
+        qs = CourtType.objects.filter(softDelete__isnull=True).order_by('name')
         
         commerceId = self.request.query_params.get('commerceId', None)
 
         if self.is_param_valid(commerceId):
-            commerce_courts = Court.objects.filter(softDelete=None, commerceId=commerceId)
+            commerce_courts = Court.objects.filter(softDelete__isnull=True, commerceId=commerceId).values_list('courtTypeId')
             qs = qs.filter(id__in=commerce_courts)
 
         return qs
@@ -63,16 +63,16 @@ class CourtTypeIdListAPIView(generics.ListAPIView):
     serializer_class = CourtTypeIdSerializer
 
     def get_queryset(self):
-        return CourtType.objects.filter(softDelete=None).order_by('name')
+        return CourtType.objects.filter(softDelete__isnull=True).order_by('name')
 
 class GroundTypeListAPIView(generics.ListAPIView):
     serializer_class = GroundTypeSerializer
 
     def get_queryset(self):
-        return GroundType.objects.filter(softDelete=None).order_by('name')
+        return GroundType.objects.filter(softDelete__isnull=True).order_by('name')
 
 class GroundTypeIdListAPIView(generics.ListAPIView):
     serializer_class = GroundTypeIdSerializer
 
     def get_queryset(self):
-        return GroundType.objects.filter(softDelete=None).order_by('name')
+        return GroundType.objects.filter(softDelete__isnull=True).order_by('name')
