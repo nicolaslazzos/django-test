@@ -1,23 +1,7 @@
 from rest_framework import generics
 
-from reservations.api.serializers import ReservationStateSerializer, PaymentMethodSerializer, PaymentReadSerializer, PaymentCreateUpdateSerializer, ReservationReadSerializer, ReservationCreateUpdateSerializer, ReviewSerializer
+from reservations.api.serializers import PaymentReadSerializer, PaymentCreateUpdateSerializer, ReservationReadSerializer, ReservationCreateUpdateSerializer, ReviewSerializer
 from reservations.models import ReservationState, PaymentMethod, Payment, Reservation, Review
-
-
-class ReservationStateRetrieveAPIView(generics.RetrieveAPIView):
-    serializer_class = ReservationStateSerializer
-    lookup_field = 'id'
-
-    def get_queryset(self):
-        return ReservationState.objects.filter(softDelete__isnull=True)
-
-
-class PaymentMethodRetrieveAPIView(generics.RetrieveAPIView):
-    serializer_class = PaymentMethodSerializer
-    lookup_field = 'id'
-
-    def get_queryset(self):
-        return PaymentMethod.objects.filter(softDelete__isnull=True)
 
 
 class PaymentCreateUpdateAPIView(generics.UpdateAPIView, generics.CreateAPIView):
@@ -63,3 +47,56 @@ class ReservationListAPIView(generics.ListAPIView):
             qs = qs.filter(startDate__lt=endDate)
 
         return qs
+
+
+class ReservationRetrieveAPIView(generics.RetrieveAPIView):
+    serializer_class = ReservationReadSerializer
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        return Reservation.objects.filter(cancellationDate__isnull=True)
+
+
+class ReservationCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
+    serializer_class = ReservationReadSerializer
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        return Reservation.objects.filter(cancellationDate__isnull=True)
+
+
+class ReviewListAPIView(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+
+    def is_param_valid(self, param):
+        return param != '' and param is not None
+
+    def get_queryset(self):
+        qs = Review.objects.filter(softDelete__isnull=True)
+
+        clientId = self.request.query_params.get('clientId', None)
+        commerceId = self.request.query_params.get('commerceId', None)
+
+        if self.is_param_valid(commerceId):
+            qs = qs.filter(commerceId=commerceId)
+
+        if self.is_param_valid(clientId):
+            qs = qs.filter(clientId=clientId)
+
+        return qs
+
+
+class ReviewRetrieveAPIView(generics.RetrieveAPIView):
+    serializer_class = ReviewSerializer
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        return Review.objects.filter(softDelete__isnull=True)
+
+
+class ReviewCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
+    serializer_class = ReviewSerializer
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        return Review.objects.filter(softDelete__isnull=True)
