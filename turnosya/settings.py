@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'courts',
     'schedules',
     'employees',
-    'services'
+    'services',
+    'reservations'
 ]
 
 MIDDLEWARE = [

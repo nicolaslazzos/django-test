@@ -20,7 +20,7 @@ class PaymentMethod(models.Model):
 
 
 class Payment(models.Model):
-    paymentMethodId = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL)
+    paymentMethodId = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL, blank=True, null=True)
     paymentDate = models.DateTimeField()
     refundDate = models.DateTimeField(blank=True, null=True)
     receiptNumber = models.CharField(max_length=100, blank=True, null=True)
@@ -28,12 +28,12 @@ class Payment(models.Model):
 
 class Reservation(models.Model):
     commerceId = models.ForeignKey(Commerce, on_delete=models.CASCADE)
-    clientId = models.ForeignKey(Profile, on_delete=models.SET_NULL)
+    clientId = models.ForeignKey(Profile, on_delete=models.SET_NULL, blank=True, null=True)
     courtId = models.ForeignKey(Court, on_delete=models.SET_NULL, blank=True, null=True)
     serviceId = models.ForeignKey(Service, on_delete=models.SET_NULL, blank=True, null=True)
     employeeId = models.ForeignKey(Employee, on_delete=models.SET_NULL, blank=True, null=True)
     paymentId = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True)
-    stateId = models.ForeignKey(ReservationState, on_delete=models.SET_NULL)
+    stateId = models.ForeignKey(ReservationState, on_delete=models.SET_NULL, blank=True, null=True)
     clientName = models.CharField(max_length=100)
     clientPhone = models.CharField(max_length=100)
     price = models.FloatField()
