@@ -32,6 +32,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
             'endDate',
             'reservationMinLength'
         ]
+        read_only_fields = ['id']
         extra_kwargs = {
             'commerceId': {'write_only': True}
         }

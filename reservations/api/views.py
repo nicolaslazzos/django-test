@@ -2,6 +2,7 @@ from rest_framework import generics
 
 from reservations.api.serializers import PaymentReadSerializer, PaymentCreateUpdateSerializer, ReservationReadSerializer, ReservationCreateUpdateSerializer, ReviewSerializer
 from reservations.models import ReservationState, PaymentMethod, Payment, Reservation, Review
+from courts.models import Court
 
 
 class PaymentCreateUpdateAPIView(generics.UpdateAPIView, generics.CreateAPIView):
@@ -25,6 +26,7 @@ class ReservationListAPIView(generics.ListAPIView):
         employeeId = self.request.query_params.get('employeeId', None)
         clientId = self.request.query_params.get('clientId', None)
         courtId = self.request.query_params.get('courtId', None)
+        courtTypeId = self.request.query_params.get('courtTypeId', None)
         startDate = self.request.query_params.get('startDate', None)
         endDate = self.request.query_params.get('endDate', None)
 
@@ -39,6 +41,9 @@ class ReservationListAPIView(generics.ListAPIView):
 
         if self.is_param_valid(courtId):
             qs = qs.filter(courtId=courtId)
+
+        if self.is_param_valid(courtTypeId):
+            qs = qs.filter(courtId__courtTypeId=courtTypeId)
 
         if self.is_param_valid(startDate):
             qs = qs.filter(startDate__gte=startDate)
@@ -58,7 +63,7 @@ class ReservationRetrieveAPIView(generics.RetrieveAPIView):
 
 
 class ReservationCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
-    serializer_class = ReservationReadSerializer
+    serializer_class = ReservationCreateUpdateSerializer
     lookup_field = 'id'
 
     def get_queryset(self):

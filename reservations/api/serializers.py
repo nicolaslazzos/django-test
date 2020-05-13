@@ -70,7 +70,6 @@ class ReservationCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
         fields = [
-            'id',
             'commerceId',
             'clientId',
             'employeeId',

@@ -17,6 +17,7 @@ class Schedule(models.Model):
 
 
 class Day(models.Model):
+    id = models.SmallIntegerField(primary_key=True, unique=True)
     order = models.SmallIntegerField()
     name = models.CharField(max_length=20)
     softDelete = models.DateTimeField(blank=True, null=True)
