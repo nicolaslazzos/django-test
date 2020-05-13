@@ -27,7 +27,7 @@ class ScheduleListAPIView(generics.ListAPIView):
         if self.is_param_valid(selectedDate):
             qs = qs.filter(Q(startDate__lte=selectedDate), Q(endDate__isnull=True) | Q(endDate__gt=selectedDate))
 
-        return qs
+        return qs.order_by('startDate')
 
 
 class ScheduleCreateUpdateDestroyAPIView(generics.CreateAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
@@ -52,7 +52,7 @@ class WorkShiftListAPIView(generics.ListAPIView):
         if self.is_param_valid(scheduleId):
             qs = qs.filter(scheduleId=scheduleId)
 
-        return qs
+        return qs.order_by('id')
 
 
 class WorkShiftCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):

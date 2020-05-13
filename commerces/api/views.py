@@ -40,7 +40,7 @@ class CommerceListAPIView(generics.ListAPIView):
         if self.is_param_valid(cuit):
             qs = qs.filter(cuit=cuit)
 
-        return qs
+        return qs.order_by('name')
 
 
 class CommerceCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
@@ -92,7 +92,7 @@ class AreaListAPIView(generics.ListAPIView):
   
   def get_queryset(self):
     qs = Area.objects.all()
-    return qs.filter(softDelete__isnull=True)
+    return qs.filter(softDelete__isnull=True).order_by('name')
 
 
 class AreaIdListAPIView(generics.ListAPIView):
@@ -100,4 +100,4 @@ class AreaIdListAPIView(generics.ListAPIView):
   
   def get_queryset(self):
     qs = Area.objects.all()
-    return qs.filter(softDelete__isnull=True)
+    return qs.filter(softDelete__isnull=True).order_by('name')

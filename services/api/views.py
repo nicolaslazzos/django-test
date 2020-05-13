@@ -23,7 +23,7 @@ class ServiceListAPIView(generics.ListAPIView):
         if self.is_param_valid(employeeId):
             qs = qs.filter(employeesIds=employeeId)
 
-        return qs
+        return qs.order_by('name')
 
 
 class ServiceCreateRetrieveUpdateAPIView(generics.CreateAPIView, generics.RetrieveAPIView, generics.UpdateAPIView):

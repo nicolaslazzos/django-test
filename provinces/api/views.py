@@ -18,11 +18,11 @@ class ProvinceIdListView(generics.ListAPIView):
   
   def get_queryset(self):
     qs = Province.objects.all()
-    return qs.filter(softDelete=None)
+    return qs.filter(softDelete=None).order_by('name')
 
 class ProvinceNameListView(generics.ListAPIView):
   serializer_class = ProvinceNameSerializer
   
   def get_queryset(self):
     qs = Province.objects.all()
-    return qs.filter(softDelete=None)
+    return qs.filter(softDelete=None).order_by('name')

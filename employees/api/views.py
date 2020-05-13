@@ -9,7 +9,7 @@ class RoleListAPIView(generics.ListAPIView):
     serializer_class = RoleSerializer
 
     def get_queryset(self):
-        return Role.objects.filter(softDelete__isnull=True)
+        return Role.objects.filter(softDelete__isnull=True).order_by('name')
 
 
 class EmployeeListAPIView(generics.ListAPIView):
@@ -42,7 +42,7 @@ class EmployeeListAPIView(generics.ListAPIView):
         if self.is_param_valid(employeesIds):
             qs = qs.filter(id__in=employeesIds)
 
-        return qs
+        return qs.order_by('profileId__firstName', 'profileId__lastName')
 
 
 class EmployeeRetrieveAPIView(generics.RetrieveAPIView):
