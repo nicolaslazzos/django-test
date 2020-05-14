@@ -21,6 +21,8 @@ class ProfileReadSerializer(serializers.ModelSerializer):
             'profilePicture',
             'province',
             'commerceId',
+            'ratingCount',
+            'ratingTotal',
             'softDelete'
         ]
 
@@ -39,6 +41,8 @@ class ProfileCreateUpdateSerializer(serializers.ModelSerializer):
             'profilePicture',
             'provinceId',
             'commerceId',
+            'ratingCount',
+            'ratingTotal',
             'softDelete'
         ]
 

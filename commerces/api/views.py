@@ -50,6 +50,26 @@ class CommerceCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView
     def get_queryset(self):
         return Commerce.objects.filter(softDelete__isnull=True)
         
+    # def patch(self, request, pk, *args, **kwargs):
+    #     rating = self.request.POST.get('rating', None)
+
+    #     if rating is not None:
+    #         commerce_object = Commerce.objects.get(commerceId=pk)
+    #         serializer = self.serializer_class(
+    #             commerce_object, 
+    #             data={ 'ratingCount': commerce_object.ratingCount + 1, 'ratingTotal': commerce_object.ratingTotal + rating }, 
+    #             partial=True
+    #         )
+    #     else:
+    #         serializer = self.serializer_class(data=request.data, partial=True)
+
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return JsonResponse(code=201, data=serializer.data)
+
+    #     return JsonResponse(code=400, data="wrong parameters")
+
+        
 
 class CommerceDeleteAPIView(generics.DestroyAPIView):
     lookup_url_kwarg = 'commerceId'

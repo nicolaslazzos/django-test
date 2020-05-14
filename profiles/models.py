@@ -11,10 +11,10 @@ class Profile(models.Model):
     email = models.EmailField()
     phone = models.CharField(max_length=50)
     profilePicture = models.URLField(max_length=300, blank=True, null=True)
-    provinceId = models.ForeignKey(
-        Province, blank=True, null=True, on_delete=models.SET_NULL)
-    commerceId = models.ForeignKey(
-        Commerce, blank=True, null=True, on_delete=models.SET_NULL)
+    provinceId = models.ForeignKey(Province, blank=True, null=True, on_delete=models.SET_NULL)
+    commerceId = models.ForeignKey(Commerce, blank=True, null=True, on_delete=models.SET_NULL)
+    ratingCount = models.IntegerField(default=0)
+    ratingTotal = models.IntegerField(default=0)
     softDelete = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):

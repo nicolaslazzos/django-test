@@ -51,6 +51,8 @@ class CommerceReadSerializer(serializers.ModelSerializer):
       'province',
       'latitude',
       'longitude',
+      'ratingCount',
+      'ratingTotal',
       'profilePicture',
       'headerPicture',
     ]
@@ -70,6 +72,8 @@ class CommerceCreateUpdateSerializer(serializers.ModelSerializer):
       'provinceId',
       'latitude',
       'longitude',
+      'ratingCount',
+      'ratingTotal',
       'profilePicture',
       'headerPicture',
       'softDelete'

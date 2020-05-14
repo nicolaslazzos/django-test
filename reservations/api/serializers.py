@@ -99,3 +99,4 @@ class ReviewSerializer(serializers.ModelSerializer):
             'rating',
             'comment'
         ]
+        read_only_fields = ['id']

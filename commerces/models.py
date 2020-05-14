@@ -25,6 +25,8 @@ class Commerce(models.Model):
     provinceId = models.ForeignKey(Province, on_delete=models.SET_NULL, null=True)
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
+    ratingCount = models.IntegerField(default=0)
+    ratingTotal = models.IntegerField(default=0)
     profilePicture = models.URLField(max_length=300, blank=True, null=True)
     headerPicture = models.URLField(max_length=300, blank=True, null=True)
     softDelete = models.DateTimeField(blank=True, null=True)
