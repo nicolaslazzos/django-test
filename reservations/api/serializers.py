@@ -22,8 +22,7 @@ class PaymentMethodSerializer(serializers.ModelSerializer):
 
 
 class PaymentReadSerializer(serializers.ModelSerializer):
-    pymentMethod = PaymentMethodSerializer(
-        read_only=True, source='paymendMethodId')
+    paymentMethod = PaymentMethodSerializer(read_only=True, source='paymentMethodId')
 
     class Meta:
         model = Payment
@@ -36,14 +35,30 @@ class PaymentCreateUpdateSerializer(serializers.ModelSerializer):
         fields = ['id', 'paymentMethodId', 'paymentDate', 'refundDate', 'receiptNumber']
 
 
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = [
+            'id',
+            'commerceId',
+            'clientId',
+            'reviewDate',
+            'rating',
+            'comment'
+        ]
+        read_only_fields = ['id']
+
+
 class ReservationReadSerializer(serializers.ModelSerializer):
     commerce = CommerceReadSerializer(read_only=True, source='commerceId')
-    client = ProfileReadSerializer(read_only=True, source='profileId')
+    client = ProfileReadSerializer(read_only=True, source='clientId')
     employee = EmployeeReadSerializer(read_only=True, source='employeeId')
     court = CourtReadSerializer(read_only=True, source='courtId')
     service = ServiceSerializer(read_only=True, source='serviceId')
     state = ReservationStateSerializer(read_only=True, source='stateId')
     payment = PaymentReadSerializer(read_only=True, source='paymentId')
+    clientReview = ReviewSerializer(read_only=True, source='clientReviewId')
+    commerceReview = ReviewSerializer(read_only=True, source='commerceReviewId')
 
     class Meta:
         model = Reservation
@@ -56,6 +71,8 @@ class ReservationReadSerializer(serializers.ModelSerializer):
             'service',
             'state',
             'payment',
+            'clientReview',
+            'commerceReview',
             'reservationDate',
             'startDate',
             'endDate',
@@ -77,6 +94,8 @@ class ReservationCreateUpdateSerializer(serializers.ModelSerializer):
             'serviceId',
             'stateId',
             'paymentId',
+            'clientReviewId',
+            'commerceReviewId',
             'reservationDate',
             'startDate',
             'endDate',
@@ -85,18 +104,3 @@ class ReservationCreateUpdateSerializer(serializers.ModelSerializer):
             'clientPhone',
             'price'
         ]
-
-
-class ReviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Review
-        fields = [
-            'id',
-            'reservationId',
-            'commerceId',
-            'clientId',
-            'reviewDate',
-            'rating',
-            'comment'
-        ]
-        read_only_fields = ['id']

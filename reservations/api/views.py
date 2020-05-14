@@ -46,7 +46,7 @@ class ReservationListAPIView(generics.ListAPIView):
             qs = qs.filter(courtId__courtTypeId=courtTypeId)
 
         if self.is_param_valid(startDate):
-            qs = qs.filter(startDate__gte=startDate)
+            qs = qs.filter(endDate__gt=startDate)
 
         if self.is_param_valid(endDate):
             qs = qs.filter(startDate__lt=endDate)
@@ -88,7 +88,7 @@ class ReviewListAPIView(generics.ListAPIView):
         if self.is_param_valid(clientId):
             qs = qs.filter(clientId=clientId)
 
-        return qsorder_by('-reviewDate')
+        return qs.order_by('-reviewDate')
 
 
 class ReviewRetrieveAPIView(generics.RetrieveAPIView):

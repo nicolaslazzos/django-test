@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'schedules',
     'employees',
     'services',
-    'reservations'
+    'reservations',
+    'notifications',
 ]
 
 MIDDLEWARE = [

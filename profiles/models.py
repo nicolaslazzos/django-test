@@ -14,7 +14,7 @@ class Profile(models.Model):
     provinceId = models.ForeignKey(Province, blank=True, null=True, on_delete=models.SET_NULL)
     commerceId = models.ForeignKey(Commerce, blank=True, null=True, on_delete=models.SET_NULL)
     ratingCount = models.IntegerField(default=0)
-    ratingTotal = models.IntegerField(default=0)
+    ratingTotal = models.FloatField(default=0)
     softDelete = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
