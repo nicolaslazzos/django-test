@@ -27,4 +27,5 @@ urlpatterns = [
     path('api/employees/', include(('employees.api.urls', 'api-employees'), namespace='api-employees')),
     path('api/services/', include(('services.api.urls', 'api-services'), namespace='api-services')),
     path('api/', include(('reservations.api.urls', 'api-reservations'), namespace='api-reservations')),
+    path('api/notifications/', include(('notifications.api.urls', 'api-notifications'), namespace='api-notifications')),
 ]

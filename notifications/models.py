@@ -27,6 +27,7 @@ class Notification(models.Model):
     commerceId = models.ForeignKey(Commerce, blank=True, null=True, on_delete=models.CASCADE)
     employeeId = models.ForeignKey(Employee, blank=True, null=True, on_delete=models.CASCADE)
     reservationId = models.ForeignKey(Reservation, blank=True, null=True, on_delete=models.CASCADE)
+    notificationTypeId = models.ForeignKey(NotificationType, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     body = models.TextField(blank=True, null=True)
     read = models.BooleanField(default=False)
