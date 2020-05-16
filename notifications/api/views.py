@@ -22,11 +22,11 @@ class NotificationTokenListAPIView(generics.ListAPIView):
             qs = qs.filter(profileId=profileId)
 
         if self.is_param_valid(commerceId):
-            employees_profiles = Employee.objects.filter(softDelete__isnull=True, commerceId=commerceId).values_list('profileId')
+            employees_profiles = Employee.objects.filter(softDelete__isnull=True, startDate__isnull=False, commerceId=commerceId).values_list('profileId')
             qs = qs.filter(profileId__in=employees_profiles)
 
         if self.is_param_valid(employeeId):
-            employee = Employee.objects.filter(softDelete__isnull=True, employeeId=employeeId)
+            employee = Employee.objects.get(id=employeeId)
             qs = qs.filter(profileId=employee.profileId.id)
 
         return qs
@@ -62,7 +62,7 @@ class NotificationListAPIView(generics.ListAPIView):
         if self.is_param_valid(employeeId):
             qs = qs.filter(employeeId=employeeId)
 
-        return qs
+        return qs.order_by('-date')
 
 
 class NotificationCreateRetrieveUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView, generics.RetrieveAPIView):

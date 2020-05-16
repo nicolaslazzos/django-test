@@ -22,13 +22,13 @@ class EmployeeReadSerializer(serializers.ModelSerializer):
         model = Employee
         fields = [
             'id',
+            'commerceId',
             'profileId',
             'profile',
             'role',
             'inviteDate',
             'startDate'
         ]
-        read_only_fields = ['id']
 
     def to_representation(self, instance):
         data = super(EmployeeReadSerializer, self).to_representation(instance)

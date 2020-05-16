@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from notifications.models import NotificationToken, NotificationType, Notification
 from reservations.api.serializers import ReservationReadSerializer
+from employees.api.serializers import EmployeeReadSerializer
 
 
 class NotificationTokenSerializer(serializers.ModelSerializer):
@@ -25,6 +26,7 @@ class NotificationTypeSerializer(serializers.ModelSerializer):
 
 
 class NotificationSerializer(serializers.ModelSerializer):
+    employee = EmployeeReadSerializer(read_only=True, source='employeeId')
     reservation = ReservationReadSerializer(read_only=True, source='reservationId')
     notificationType = NotificationTypeSerializer(read_only=True, source='notificationTypeId')
 
@@ -34,6 +36,7 @@ class NotificationSerializer(serializers.ModelSerializer):
             'id',
             'commerceId',
             'profileId',
+            'employee',
             'employeeId',
             'reservation',
             'reservationId',
@@ -49,6 +52,7 @@ class NotificationSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id']
         extra_kwargs = {
+            'employeeId': {'write_only': True},
             'reservationId': {'write_only': True},
             'softDelete': {'write_only': True},
             'notificationTypeId': {'write_only': True},

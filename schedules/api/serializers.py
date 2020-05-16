@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from schedules.models import Schedule, Day, WorkShift
+from employees.api.serializers import EmployeeReadSerializer
 
 
 class WorkShiftSerializer(serializers.ModelSerializer):
@@ -22,11 +23,14 @@ class WorkShiftSerializer(serializers.ModelSerializer):
 
 
 class ScheduleSerializer(serializers.ModelSerializer):
+    employee = EmployeeReadSerializer(read_only=True, source='employeeId')
+    
     class Meta:
         model = Schedule
         fields = [
             'id',
             'commerceId',
+            'employee',
             'employeeId',
             'startDate',
             'endDate',
