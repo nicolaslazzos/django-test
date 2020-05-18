@@ -2,11 +2,18 @@ from rest_framework import generics
 
 from employees.models import Role, Employee
 from schedules.models import Schedule, WorkShift
-from employees.api.serializers import RoleSerializer, EmployeeReadSerializer, EmployeeCreateUpdateSerializer
+from employees.api.serializers import RoleSerializer, RoleIdSerializer, EmployeeReadSerializer, EmployeeCreateUpdateSerializer
 
 
 class RoleListAPIView(generics.ListAPIView):
     serializer_class = RoleSerializer
+
+    def get_queryset(self):
+        return Role.objects.filter(softDelete__isnull=True).order_by('name')
+
+
+class RoleIdListAPIView(generics.ListAPIView):
+    serializer_class = RoleIdSerializer
 
     def get_queryset(self):
         return Role.objects.filter(softDelete__isnull=True).order_by('name')

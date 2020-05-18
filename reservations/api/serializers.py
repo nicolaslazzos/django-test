@@ -44,9 +44,13 @@ class ReviewSerializer(serializers.ModelSerializer):
             'clientId',
             'reviewDate',
             'rating',
-            'comment'
+            'comment',
+            'softDelete'
         ]
         read_only_fields = ['id']
+        extra_kwargs = {
+            'softDelete': {'write_only': True}
+        }
 
 
 class ReservationReadSerializer(serializers.ModelSerializer):

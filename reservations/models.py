@@ -31,6 +31,13 @@ class Payment(models.Model):
     refundDate = models.DateTimeField(blank=True, null=True)
     receiptNumber = models.CharField(max_length=100, blank=True, null=True)
 
+    def __str__(self):
+        state = ''
+        if self.refundDate is not None:
+            state = ' - Refunded'
+
+        return str(self.paymentDate.strftime('%d/%m/%y')) + state
+
 
 class Review(models.Model):
     commerceId = models.ForeignKey(Commerce, on_delete=models.SET_NULL, blank=True, null=True)

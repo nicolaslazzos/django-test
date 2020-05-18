@@ -4,6 +4,15 @@ from employees.models import Employee, Role
 from profiles.api.serializers import ProfileReadSerializer
 
 
+class RoleIdSerializer(serializers.ModelSerializer):
+    value = serializers.CharField(source='id')
+    label = serializers.CharField(source='name')
+
+    class Meta:
+        model = Role
+        fields = ['value', 'label']
+
+
 class RoleSerializer(serializers.ModelSerializer):
     roleId = serializers.CharField(source='id')
 
@@ -26,6 +35,7 @@ class EmployeeReadSerializer(serializers.ModelSerializer):
             'profileId',
             'profile',
             'role',
+            'roleId',
             'inviteDate',
             'startDate'
         ]
