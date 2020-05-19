@@ -55,6 +55,7 @@ class EmployeeCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
         fields = [
+            'id',
             'profileId',
             'commerceId',
             'roleId',
@@ -62,3 +63,4 @@ class EmployeeCreateUpdateSerializer(serializers.ModelSerializer):
             'startDate',
             'softDelete'
         ]
+        read_only_fields = ['id']
