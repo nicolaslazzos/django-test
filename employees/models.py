@@ -24,4 +24,4 @@ class Employee(models.Model):
     softDelete = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return str(self.profileId) + ' - ' + str(self.roleId)
+        return str(self.commerceId) + ' - ' + str(self.profileId) + ' - ' + str(self.roleId)

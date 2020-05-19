@@ -1,8 +1,8 @@
 from rest_framework import generics
 from django.db.models import Q
 
-from schedules.models import Schedule, WorkShift, Day
-from schedules.api.serializers import WorkShiftSerializer, ScheduleSerializer
+from schedules.models import Schedule, WorkShift, Day, ScheduleSetting
+from schedules.api.serializers import WorkShiftSerializer, ScheduleSerializer, ScheduleSettingSerializer
 
 
 class ScheduleListAPIView(generics.ListAPIView):
@@ -61,3 +61,30 @@ class WorkShiftCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIVie
 
     def get_queryset(self):
         return WorkShift.objects.filter(softDelete__isnull=True)
+
+class ScheduleSettingListAPIView(generics.ListAPIView):
+    serializer_class = ScheduleSettingSerializer
+
+    def is_param_valid(self, param):
+        return param != '' and param is not None
+
+    def get_queryset(self):
+        qs = ScheduleSetting.objects.all()
+
+        commerceId = self.request.query_params.get('commerceId', None)
+        employeeId = self.request.query_params.get('employeeId', None)
+
+        if self.is_param_valid(commerceId):
+            qs = qs.filter(commerceId=commerceId)
+        
+        if self.is_param_valid(employeeId):
+            qs = qs.filter(employeeId=employeeId)
+
+        return qs
+
+class ScheduleSettingCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
+    serializer_class = ScheduleSettingSerializer
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        return ScheduleSetting.objects.all()

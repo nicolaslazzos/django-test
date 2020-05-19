@@ -13,7 +13,13 @@ class Schedule(models.Model):
     softDelete = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return str(self.commerceId) + ' - ' + str(self.startDate.strftime('%d/%m/%y'))
+        name = ''
+        if self.employeeId is not None:
+            name = str(self.employeeId)
+        else:
+            name = str(self.commerceId)
+
+        return name + ' - ' + str(self.startDate.strftime('%d/%m/%y'))
 
 
 class Day(models.Model):
@@ -37,4 +43,19 @@ class WorkShift(models.Model):
 
     def __str__(self):
         return str(self.scheduleId)
+
+
+class ScheduleSetting(models.Model):
+    commerceId = models.ForeignKey(Commerce, on_delete=models.CASCADE)
+    employeeId = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True, blank=True)
+    reservationDayPeriod = models.SmallIntegerField()
+    reservationMinCancelTime = models.SmallIntegerField()
+
+    def __str__(self):
+        if self.employeeId is not None:
+            return str(self.employeeId)
+        else:
+            return str(self.commerceId)
+
+
 
