@@ -5,7 +5,7 @@ from commerces.models import Commerce
 from employees.models import Employee
 
 from .serializers import ProfileReadSerializer, ProfileCreateUpdateSerializer, FavoriteIdSerializer
-from commerces.api.serializers import CommerceReadSerializer
+from commerces.api.serializers import CommerceSerializer
 
 
 # PROFILE VIEWS
@@ -48,7 +48,7 @@ class ProfileRetrieveAPIView(generics.RetrieveAPIView):
 # WORKPLACES
 
 class ProfileWorkplacesListAPIView(generics.ListAPIView):
-    serializer_class = CommerceReadSerializer
+    serializer_class = CommerceSerializer
 
     def is_param_valid(self, param):
         return param != '' and param is not None
@@ -70,7 +70,7 @@ class ProfileWorkplacesListAPIView(generics.ListAPIView):
 # FAVORITES VIEWS
 
 class FavoriteListAPIView(generics.ListAPIView):
-    serializer_class = CommerceReadSerializer
+    serializer_class = CommerceSerializer
 
     def get_queryset(self):
         profileId = self.request.query_params.get('profileId', None)

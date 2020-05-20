@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from profiles.models import Profile, Favorite
 from provinces.api.serializers import ProvinceSerializer
-from commerces.api.serializers import CommerceReadSerializer
+from commerces.api.serializers import CommerceSerializer
 
 
 # PROFILE SERIALIZERS

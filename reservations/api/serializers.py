@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from reservations.models import ReservationState, PaymentMethod, Payment, Review, Reservation
 
-from commerces.api.serializers import CommerceReadSerializer
+from commerces.api.serializers import CommerceSerializer
 from employees.api.serializers import EmployeeReadSerializer
 from courts.api.serializers import CourtReadSerializer
 from services.api.serializers import ServiceSerializer
@@ -54,7 +54,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class ReservationReadSerializer(serializers.ModelSerializer):
-    commerce = CommerceReadSerializer(read_only=True, source='commerceId')
+    commerce = CommerceSerializer(read_only=True, source='commerceId')
     client = ProfileReadSerializer(read_only=True, source='clientId')
     employee = EmployeeReadSerializer(read_only=True, source='employeeId')
     court = CourtReadSerializer(read_only=True, source='courtId')
