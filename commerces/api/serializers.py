@@ -34,7 +34,7 @@ class AreaIdSerializer(serializers.ModelSerializer):
 # COMMERCES
 
 class CommerceSerializer(serializers.ModelSerializer):
-    commerceId = serializers.IntegerField(source='id')
+    commerceId = serializers.IntegerField(read_only=True, source='id')
     province = ProvinceSerializer(read_only=True, source='provinceId')
     area = AreaSerializer(read_only=True, source='areaId')
 

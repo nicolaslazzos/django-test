@@ -2,9 +2,11 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db.models import Q
+from django.db import transaction
+from django.http import JsonResponse
 
 from commerces.models import Commerce, Area
-from employees.models import Employee
+from employees.models import Employee, Role
 from courts.models import Court
 from schedules.models import Schedule, WorkShift, Day, Month
 from profiles.models import Profile
@@ -47,30 +49,58 @@ class CommerceListAPIView(generics.ListAPIView):
         return qs.order_by('name')
 
 
-class CommerceCreateRetrieveUpdateDestroyAPIView(generics.CreateAPIView, generics.UpdateAPIView, generics.DestroyAPIView, generics.RetrieveAPIView):
+class CommerceCreateAPIView(generics.CreateAPIView):
+    serializer_class = CommerceSerializer
+
+    def get_queryset(self):
+        return Commerce.objects.filter(softDelete__isnull=True)
+        
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            commerce = serializer.save()
+            
+            profileId = request.data['profileId']
+            profile = Profile.objects.get(id=profileId)
+            profile.commerceId = commerce
+            profile.save()
+
+            role = Role.objects.get(id='OWNER')
+
+            employee = Employee(profileId=profile, commerceId=commerce, roleId=role, inviteDate=datetime.datetime.now(), startDate=datetime.datetime.now())
+            employee.save()
+
+            return JsonResponse(data={ 'commerceId': commerce.id, 'employeeId': employee.id }, status=201)
+
+        return JsonResponse(data='wrong parameters', status=400, safe=False)
+
+
+class CommerceRetrieveUpdateDestroyAPIView(generics.UpdateAPIView, generics.DestroyAPIView, generics.RetrieveAPIView):
     serializer_class = CommerceSerializer
     lookup_url_kwarg = 'commerceId'
 
     def get_queryset(self):
         return Commerce.objects.filter(softDelete__isnull=True)
-        
-    def delete(self, request, pk):
-        commerce_object = Commerce.objects.get(commerceId=pk)
-        delete_date = datetime.datetime.now()
-        serializer = self.serializer_class(commerce_object, data={ 'softDelete': delete_date }, partial=True)
 
-        if serializer.is_valid():
-            serializer.save()
-            Employee.objects.filter(softDelete__isnull=True, commerceId=pk).update(softDelete=delete_date)
-            Courts.objects.filter(softDelete__isnull=True, commerceId=pk).update(softDelete=delete_date)
-            schedules = Schedule.objects.filter(softDelete__isnull=True, commerceId=pk)
-            schedules.update(softDelete=delete_date)
-            WorkShift.objects.filter(softDelete__isnull=True, scheduleId__in=schedules).update(softDelete=delete_date)
-            Profile.objects.filter(softDelete__isnull=True, commerceId=pk).update(commerceId=None)
+    # def delete(self, request, pk):
+    #     commerce_object = Commerce.objects.get(commerceId=pk)
+    #     delete_date = datetime.datetime.now()
+    #     serializer = self.serializer_class(commerce_object, data={ 'softDelete': delete_date }, partial=True)
+
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         Employee.objects.filter(softDelete__isnull=True, commerceId=pk).update(softDelete=delete_date)
+    #         Courts.objects.filter(softDelete__isnull=True, commerceId=pk).update(softDelete=delete_date)
+    #         schedules = Schedule.objects.filter(softDelete__isnull=True, commerceId=pk)
+    #         schedules.update(softDelete=delete_date)
+    #         WorkShift.objects.filter(softDelete__isnull=True, scheduleId__in=schedules).update(softDelete=delete_date)
+    #         Profile.objects.filter(softDelete__isnull=True, commerceId=pk).update(commerceId=None)
             
-            return JsonResponse(code=201, data=serializer.data)
+    #         return JsonResponse(code=201, data=serializer.data)
 
-        return JsonResponse(code=400, data="wrong parameters")
+    #     return JsonResponse(code=400, data="wrong parameters")
 
     # def patch(self, request, pk, *args, **kwargs):
     #     rating = self.request.POST.get('rating', None)
