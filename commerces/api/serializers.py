@@ -61,11 +61,6 @@ class CommerceSerializer(serializers.ModelSerializer):
             'headerPicture',
             'softDelete',
         ]
-        read_only_fields = [
-            'commerceId',
-            'area',
-            'province'
-        ]
         extra_kwargs = {
             'areaId': {'write_only': True},
             'provinceId': {'write_only': True},

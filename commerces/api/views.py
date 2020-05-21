@@ -8,9 +8,10 @@ from django.http import JsonResponse
 from commerces.models import Commerce, Area
 from employees.models import Employee, Role
 from courts.models import Court
+from services.models import Service
 from schedules.models import Schedule, WorkShift, Day, Month
 from profiles.models import Profile
-from reservations.models import Reservation
+from reservations.models import Reservation, ReservationState
 
 from .serializers import CommerceSerializer, CommerceSerializer, AreaSerializer, AreaIdSerializer
 
@@ -84,42 +85,27 @@ class CommerceRetrieveUpdateDestroyAPIView(generics.UpdateAPIView, generics.Dest
     def get_queryset(self):
         return Commerce.objects.filter(softDelete__isnull=True)
 
-    # def delete(self, request, pk):
-    #     commerce_object = Commerce.objects.get(commerceId=pk)
-    #     delete_date = datetime.datetime.now()
-    #     serializer = self.serializer_class(commerce_object, data={ 'softDelete': delete_date }, partial=True)
+    @transaction.atomic
+    def delete(self, request, commerceId):
+        commerce = Commerce.objects.get(id=commerceId)
+        delete_date = datetime.datetime.now()
+        serializer = self.serializer_class(commerce, data={ 'softDelete': delete_date }, partial=True)
 
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         Employee.objects.filter(softDelete__isnull=True, commerceId=pk).update(softDelete=delete_date)
-    #         Courts.objects.filter(softDelete__isnull=True, commerceId=pk).update(softDelete=delete_date)
-    #         schedules = Schedule.objects.filter(softDelete__isnull=True, commerceId=pk)
-    #         schedules.update(softDelete=delete_date)
-    #         WorkShift.objects.filter(softDelete__isnull=True, scheduleId__in=schedules).update(softDelete=delete_date)
-    #         Profile.objects.filter(softDelete__isnull=True, commerceId=pk).update(commerceId=None)
+        if serializer.is_valid():
+            serializer.save()
+            Employee.objects.filter(softDelete__isnull=True, commerceId=commerceId).update(softDelete=delete_date)
+            Court.objects.filter(softDelete__isnull=True, commerceId=commerceId).update(softDelete=delete_date)
+            Service.objects.filter(softDelete__isnull=True, commerceId=commerceId).update(softDelete=delete_date)
+            schedules = Schedule.objects.filter(softDelete__isnull=True, commerceId=commerceId)
+            schedules.update(softDelete=delete_date)
+            WorkShift.objects.filter(softDelete__isnull=True, scheduleId__in=schedules).update(softDelete=delete_date)
+            Profile.objects.filter(softDelete__isnull=True, commerceId=commerceId).update(commerceId=None)
+            state = ReservationState.objects.get(id='canceled')
+            Reservation.objects.filter(cancellationDate__isnull=True, commerceId=commerceId).update(stateId=state, cancellationDate=delete_date)
             
-    #         return JsonResponse(code=201, data=serializer.data)
+            return JsonResponse(data=serializer.data, status=201)
 
-    #     return JsonResponse(code=400, data="wrong parameters")
-
-    # def patch(self, request, pk, *args, **kwargs):
-    #     rating = self.request.POST.get('rating', None)
-
-    #     if rating is not None:
-    #         commerce_object = Commerce.objects.get(commerceId=pk)
-    #         serializer = self.serializer_class(
-    #             commerce_object, 
-    #             data={ 'ratingCount': commerce_object.ratingCount + 1, 'ratingTotal': commerce_object.ratingTotal + rating }, 
-    #             partial=True
-    #         )
-    #     else:
-    #         serializer = self.serializer_class(data=request.data, partial=True)
-
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return JsonResponse(code=201, data=serializer.data)
-
-    #     return JsonResponse(code=400, data="wrong parameters")
+        return JsonResponse(data='wrong parameters', status=400, safe=False)
 
 
 # AREAS
