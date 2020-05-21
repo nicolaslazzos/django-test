@@ -101,7 +101,7 @@ class CommerceRetrieveUpdateDestroyAPIView(generics.UpdateAPIView, generics.Dest
             WorkShift.objects.filter(softDelete__isnull=True, scheduleId__in=schedules).update(softDelete=delete_date)
             Profile.objects.filter(softDelete__isnull=True, commerceId=commerceId).update(commerceId=None)
             state = ReservationState.objects.get(id='canceled')
-            Reservation.objects.filter(cancellationDate__isnull=True, commerceId=commerceId).update(stateId=state, cancellationDate=delete_date)
+            Reservation.objects.filter(cancellationDate__isnull=True, commerceId=commerceId, endDate__gt=delete_date).update(stateId=state, cancellationDate=delete_date)
             
             return JsonResponse(data=serializer.data, status=201)
 
