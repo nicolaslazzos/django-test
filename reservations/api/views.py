@@ -1,8 +1,15 @@
 from rest_framework import generics
+from django.db import transaction
+from django.db.models import Q
+from django.http import JsonResponse
 
 from reservations.api.serializers import PaymentReadSerializer, PaymentCreateUpdateSerializer, ReservationReadSerializer, ReservationCreateUpdateSerializer, ReviewSerializer
 from reservations.models import ReservationState, PaymentMethod, Payment, Reservation, Review
 from courts.models import Court
+from profiles.models import Profile
+from commerces.models import Commerce
+
+import datetime
 
 
 class PaymentCreateUpdateAPIView(generics.UpdateAPIView, generics.CreateAPIView):
@@ -91,17 +98,93 @@ class ReviewListAPIView(generics.ListAPIView):
         return qs.order_by('-reviewDate')
 
 
-class ReviewRetrieveAPIView(generics.RetrieveAPIView):
+class ReviewCreateRetrieveUpdateDestroyAPIView(generics.CreateAPIView, generics.UpdateAPIView, generics.RetrieveAPIView, generics.DestroyAPIView):
     serializer_class = ReviewSerializer
     lookup_field = 'id'
 
     def get_queryset(self):
         return Review.objects.filter(softDelete__isnull=True)
 
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
 
-class ReviewCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
-    serializer_class = ReviewSerializer
-    lookup_field = 'id'
+        if serializer.is_valid():
+            review = serializer.save()
+            
+            reservationId = request.data['reservationId']
+            rating = request.data['rating']
 
-    def get_queryset(self):
-        return Review.objects.filter(softDelete__isnull=True)
+            reservation = Reservation.objects.get(id=reservationId)
+
+            if 'clientId' in request.data:
+                reservation.commerceReviewId = review
+                receiver = Profile.objects.get(id=request.data['clientId'])
+            else:
+                reservation.clientReviewId = review
+                receiver = Commerce.objects.get(id=request.data['commerceId'])
+
+            reservation.save()
+
+            receiver.ratingCount = receiver.ratingCount + 1
+            receiver.ratingTotal = receiver.ratingTotal + rating
+            receiver.save()
+
+            return JsonResponse(data=serializer.data, status=201)
+
+        return JsonResponse(data='wrong parameters', status=400, safe=False)
+
+    @transaction.atomic
+    def update(self, request, id, *args, **kwargs):
+        review = Review.objects.get(id=id)
+        serializer = self.serializer_class(review, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            profile = review.clientId
+            commerce = review.commerceId
+            rating = request.data['rating']
+
+            if profile is not None:
+                receiver = profile
+            else:
+                receiver = commerce
+
+            receiver.ratingTotal = receiver.ratingTotal - review.rating + rating
+            receiver.save()
+
+            serializer.save()
+
+            return JsonResponse(data=serializer.data, status=201)
+
+        return JsonResponse(data='wrong parameters', status=400, safe=False)
+
+    @transaction.atomic
+    def delete(self, request, id):
+        review = Review.objects.get(id=id)
+        delete_date = datetime.datetime.now()
+        serializer = self.serializer_class(review, data={ 'softDelete': delete_date }, partial=True)
+
+        if serializer.is_valid():
+            profile = review.clientId
+            commerce = review.commerceId
+
+            if profile is not None:
+                reservation = Reservation.objects.get(commerceReviewId=id)
+                reservation.commerceReviewId = None
+                receiver = profile
+            else:
+                reservation = Reservation.objects.get(clientReviewId=id)
+                reservation.clientReviewId = None
+                receiver = commerce
+
+            reservation.save()
+
+            receiver.ratingCount = receiver.ratingCount - 1
+            receiver.ratingTotal = receiver.ratingTotal - review.rating
+            receiver.save()
+
+            serializer.save()
+
+            return JsonResponse(data=serializer.data, status=201)
+
+        return JsonResponse(data='wrong parameters', status=400, safe=False)
