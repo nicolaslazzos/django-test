@@ -1,11 +1,16 @@
 from rest_framework import generics
+from django.db import transaction
+from django.http import JsonResponse
 
 from profiles.models import Profile, Favorite
 from commerces.models import Commerce
 from employees.models import Employee
+from reservations.models import Reservation, ReservationState
 
 from .serializers import ProfileReadSerializer, ProfileCreateUpdateSerializer, FavoriteIdSerializer
 from commerces.api.serializers import CommerceSerializer
+
+import datetime
 
 
 # PROFILE VIEWS
@@ -27,13 +32,31 @@ class ProfileListAPIView(generics.ListAPIView):
         return qs
 
 
-class ProfileCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
+class ProfileCreateUpdateDestroyAPIView(generics.CreateAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
     lookup_url_kwarg = 'profileId'
     serializer_class = ProfileCreateUpdateSerializer
 
     def get_queryset(self):
         qs = Profile.objects.all()
         return qs.filter(softDelete__isnull=True)
+
+    @transaction.atomic
+    def delete(self, request, id):
+        profile = Profile.objects.get(id=id)
+        delete_date = datetime.datetime.now()
+        serializer = self.serializer_class(profile, data={ 'softDelete': delete_date }, partial=True)
+
+        if serializer.is_valid():
+            state = ReservationState.objects.get(id='canceled')
+            Reservation.objects.filter(cancellationDate__isnull=True, clientId=id, startDate__gte=delete_date).update(cancellationDate=delete_date, stateId=state)
+
+            Employee.objects.filter(softDelete__isnull=True, profileId=id).update(softDelete=delete_date)
+
+            serializer.save()
+
+            return JsonResponse(data=serializer.data, status=201)
+
+        return JsonResponse(data='wrong parameters', status=400, safe=False)
 
 
 class ProfileRetrieveAPIView(generics.RetrieveAPIView):

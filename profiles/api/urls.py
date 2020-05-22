@@ -1,12 +1,13 @@
 from django.urls import path
 
-from .views import ProfileListAPIView, ProfileCreateUpdateAPIView, ProfileRetrieveAPIView, ProfileWorkplacesListAPIView, FavoriteListAPIView, FavoriteIdListAPIView, FavoriteCreateDeleteAPIView
+from .views import ProfileListAPIView, ProfileCreateUpdateDestroyAPIView, ProfileRetrieveAPIView, ProfileWorkplacesListAPIView, FavoriteListAPIView, FavoriteIdListAPIView, FavoriteCreateDeleteAPIView
 
 urlpatterns = [
     # PROFILES 
     path('profiles/', ProfileListAPIView.as_view(), name='profile-list'),
-    path('profiles/create/', ProfileCreateUpdateAPIView.as_view(), name='profile-create'),
-    path('profiles/update/<profileId>/', ProfileCreateUpdateAPIView.as_view(), name='profile-update'),
+    path('profiles/create/', ProfileCreateUpdateDestroyAPIView.as_view(), name='profile-create'),
+    path('profiles/update/<profileId>/', ProfileCreateUpdateDestroyAPIView.as_view(), name='profile-update'),
+    path('profiles/delete/<profileId>/', ProfileCreateUpdateDestroyAPIView.as_view(), name='profile-delete'),
     path('profiles/<profileId>/', ProfileRetrieveAPIView.as_view(), name='profile-read'),
     # FAVORITES
     path('favorites/', FavoriteListAPIView.as_view(), name='favorite-list'),
