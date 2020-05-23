@@ -22,7 +22,7 @@ class RoleSerializer(serializers.ModelSerializer):
         read_only_fields = ['roleId']
 
 
-class EmployeeReadSerializer(serializers.ModelSerializer):
+class EmployeeSerializer(serializers.ModelSerializer):
     role = RoleSerializer(read_only=True, source='roleId')
     profile = ProfileReadSerializer(read_only=True, source='profileId')
     profile_fields = ['firstName', 'lastName', 'email', 'phone', 'profilePicture']
@@ -37,11 +37,16 @@ class EmployeeReadSerializer(serializers.ModelSerializer):
             'role',
             'roleId',
             'inviteDate',
-            'startDate'
+            'startDate',
+            'softDelete'
         ]
+        read_only_fields = ['id', 'firstName', 'lastName', 'email', 'phone', 'profilePicture']
+        extra_kwargs = {
+            'softDelete': { 'write_only': True },
+        }
 
     def to_representation(self, instance):
-        data = super(EmployeeReadSerializer, self).to_representation(instance)
+        data = super(EmployeeSerializer, self).to_representation(instance)
         profile = data.pop('profile')
 
         for key, val in profile.items():
@@ -49,18 +54,3 @@ class EmployeeReadSerializer(serializers.ModelSerializer):
                 data.update({key: val})
 
         return data
-
-
-class EmployeeCreateUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Employee
-        fields = [
-            'id',
-            'profileId',
-            'commerceId',
-            'roleId',
-            'inviteDate',
-            'startDate',
-            'softDelete'
-        ]
-        read_only_fields = ['id']

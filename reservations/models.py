@@ -75,4 +75,9 @@ class Reservation(models.Model):
     cancellationDate = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return str(self.commerceId) + ' - ' + str(self.clientId) + ' - ' + str(self.startDate.strftime('%d/%m/%y'))
+        if self.clientId is not None:
+            client = str(self.clientId)
+        else:
+            client = slef.clientName
+
+        return str(self.commerceId) + ' - ' + client + ' - ' + str(self.startDate.strftime('%d/%m/%y')) + ' - ' + str(self.stateId)

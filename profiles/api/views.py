@@ -82,7 +82,7 @@ class ProfileWorkplacesListAPIView(generics.ListAPIView):
 
         if self.is_param_valid(profileId):
             profile_object = Profile.objects.get(id=profileId)
-            employees_objects = Employee.objects.filter(softDelete__isnull=True, profileId=profileId).values_list('commerceId')
+            employees_objects = Employee.objects.filter(softDelete__isnull=True, startDate__isnull=False, profileId=profileId).values_list('commerceId')
 
             if profile_object.commerceId is not None:
                 commerceId = profile_object.commerceId.id

@@ -35,6 +35,9 @@ class CourtCreateRetrieveUpdateDestroyAPIView(generics.CreateAPIView, generics.R
     lookup_field = 'id'
     serializer_class = CourtSerializer
 
+    def is_param_valid(self, param):
+        return param != '' and param is not None
+
     def get_queryset(self):
         return Court.objects.filter(softDelete__isnull=True)
 
@@ -70,7 +73,7 @@ class CourtCreateRetrieveUpdateDestroyAPIView(generics.CreateAPIView, generics.R
         if serializer.is_valid():
             reservations_id = self.request.query_params.get('reservationsToCancel', None)
 
-            if reservations_id is not None:
+            if self.is_param_valid(reservations_id):
                 reservations_id = map(lambda id: int(id), reservations_id.split(','))
                 state = ReservationState.objects.get(id='canceled')
 

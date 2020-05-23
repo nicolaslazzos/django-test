@@ -15,11 +15,15 @@ class ScheduleListAPIView(generics.ListAPIView):
         qs = Schedule.objects.filter(softDelete__isnull=True)
 
         commerceId = self.request.query_params.get('commerceId', None)
+        employeeId = self.request.query_params.get('employeeId', None)
         date = self.request.query_params.get('date', None)
         selectedDate = self.request.query_params.get('selectedDate', None)
 
         if self.is_param_valid(commerceId):
             qs = qs.filter(commerceId=commerceId)
+
+        if self.is_param_valid(employeeId):
+            qs = qs.filter(employeeId=employeeId)
 
         if self.is_param_valid(date):
             qs = qs.filter(Q(endDate__gt=date) | Q(endDate__isnull=True))

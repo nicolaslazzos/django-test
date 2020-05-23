@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from schedules.models import Schedule, Day, WorkShift, ScheduleSetting
-from employees.api.serializers import EmployeeReadSerializer
+from employees.api.serializers import EmployeeSerializer
 
 
 class WorkShiftSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class WorkShiftSerializer(serializers.ModelSerializer):
 
 
 class ScheduleSerializer(serializers.ModelSerializer):
-    employee = EmployeeReadSerializer(read_only=True, source='employeeId')
+    employee = EmployeeSerializer(read_only=True, source='employeeId')
     
     class Meta:
         model = Schedule
@@ -43,12 +43,11 @@ class ScheduleSerializer(serializers.ModelSerializer):
 
 
 class ScheduleSettingSerializer(serializers.ModelSerializer):
-    scheduleSettingId = serializers.IntegerField(source='id')
+    scheduleSettingId = serializers.IntegerField(read_only=True, source='id')
 
     class Meta:
         model = ScheduleSetting
         fields = ['scheduleSettingId', 'commerceId', 'employeeId', 'reservationDayPeriod', 'reservationMinCancelTime']
-        read_only_fields = ['scheduleSettingId']
         extra_kwargs = {
             'commerceId': { 'write_only': True },
             'employeeId': { 'write_only': True },

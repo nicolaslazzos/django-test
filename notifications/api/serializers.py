@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from notifications.models import NotificationToken, NotificationType, Notification
 from reservations.api.serializers import ReservationReadSerializer
-from employees.api.serializers import EmployeeReadSerializer
+from employees.api.serializers import EmployeeSerializer
 
 
 class NotificationTokenSerializer(serializers.ModelSerializer):
@@ -26,7 +26,7 @@ class NotificationTypeSerializer(serializers.ModelSerializer):
 
 
 class NotificationSerializer(serializers.ModelSerializer):
-    employee = EmployeeReadSerializer(read_only=True, source='employeeId')
+    employee = EmployeeSerializer(read_only=True, source='employeeId')
     reservation = ReservationReadSerializer(read_only=True, source='reservationId')
     notificationType = NotificationTypeSerializer(read_only=True, source='notificationTypeId')
 
