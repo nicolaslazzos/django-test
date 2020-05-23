@@ -1,11 +1,16 @@
 from rest_framework import generics
+from django.db import transaction
+from django.http import JsonResponse
 
 from courts.models import CourtType, GroundType, Court
-from courts.api.serializers import CourtTypeSerializer, CourtTypeIdSerializer, GroundTypeIdSerializer, GroundTypeSerializer, CourtReadSerializer, CourtCreateUpdateSerializer
+from reservations.models import Reservation, ReservationState, Payment
 
+from courts.api.serializers import CourtTypeSerializer, CourtTypeIdSerializer, GroundTypeIdSerializer, GroundTypeSerializer, CourtSerializer, CourtSerializer
+
+import datetime
 
 class CourtListAPIView(generics.ListAPIView):
-    serializer_class = CourtReadSerializer
+    serializer_class = CourtSerializer
     lookup_url_kwarg = 'id'
 
     def is_param_valid(self, param):
@@ -26,20 +31,61 @@ class CourtListAPIView(generics.ListAPIView):
         return qs
 
 
-class CourtRetrieveAPIView(generics.RetrieveAPIView):
+class CourtCreateRetrieveUpdateDestroyAPIView(generics.CreateAPIView, generics.RetrieveAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
     lookup_field = 'id'
-    serializer_class = CourtReadSerializer
+    serializer_class = CourtSerializer
 
     def get_queryset(self):
         return Court.objects.filter(softDelete__isnull=True)
 
+    @transaction.atomic
+    def update(self, request, id, *args, **kwargs):
+        court = Court.objects.get(id=id)
+        serializer = self.serializer_class(court, data=request.data, partial=True)
 
-class CourtCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView):
-    lookup_field = 'id'
-    serializer_class = CourtCreateUpdateSerializer
+        if serializer.is_valid():
+            if 'reservationsToCancel' in request.data and len(request.data['reservationsToCancel']):
+                state = ReservationState.objects.get(id='canceled')
+                cancellation_date = datetime.datetime.now()
 
-    def get_queryset(self):
-        return Court.objects.filter(softDelete__isnull=True)
+                reservations = Reservation.objects.filter(cancellationDate__isnull=True, id__in=request.data['reservationsToCancel'], courtId=id)
+
+                paid_reservations = reservations.filter(paymentId__isnull=False).values_list('paymentId')
+                payments = Payment.objects.filter(id__in=paid_reservations, refundDate__isnull=True).update(refundDate=cancellation_date)
+
+                reservations.update(cancellationDate=cancellation_date, stateId=state)
+
+            serializer.save()
+
+            return JsonResponse(data=serializer.data, status=201)
+
+        return JsonResponse(data='wrong parameters', status=400, safe=False)
+
+    @transaction.atomic
+    def delete(self, request, id):
+        court = Court.objects.get(id=id)
+        delete_date = datetime.datetime.now()
+        serializer = self.serializer_class(court, data={ 'softDelete': delete_date }, partial=True)
+
+        if serializer.is_valid():
+            reservations_id = self.request.query_params.get('reservationsToCancel', None)
+
+            if reservations_id is not None:
+                reservations_id = map(lambda id: int(id), reservations_id.split(','))
+                state = ReservationState.objects.get(id='canceled')
+
+                reservations = Reservation.objects.filter(cancellationDate__isnull=True, id__in=reservations_id, courtId=id)
+
+                paid_reservations = reservations.filter(paymentId__isnull=False).values_list('paymentId')
+                payments = Payment.objects.filter(id__in=paid_reservations, refundDate__isnull=True).update(refundDate=delete_date)
+
+                reservations.update(cancellationDate=delete_date, stateId=state)
+
+            serializer.save()
+
+            return JsonResponse(data=serializer.data, status=201)
+
+        return JsonResponse(data='wrong parameters', status=400, safe=False)
 
 
 class CourtTypeListAPIView(generics.ListAPIView):

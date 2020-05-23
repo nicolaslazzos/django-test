@@ -35,35 +35,10 @@ class GroundTypeIdSerializer(serializers.ModelSerializer):
         fields = ['value', 'label']
 
 
-class CourtReadSerializer(serializers.ModelSerializer):
+class CourtSerializer(serializers.ModelSerializer):
     courtType = CourtTypeSerializer(read_only=True, source='courtTypeId')
-    court = serializers.IntegerField(source='courtTypeId.id')
     groundType = GroundTypeSerializer(read_only=True, source='groundTypeId')
-    ground = serializers.IntegerField(source='groundTypeId.id')
 
-    class Meta:
-        model = Court
-        fields = [
-            'id',
-            'name',
-            'description',
-            'courtTypeId',
-            'courtType',
-            'court',
-            'groundTypeId',
-            'groundType',
-            'ground',
-            'price',
-            'lightPrice',
-            'lightHour',
-            'disabledFrom',
-            'disabledTo',
-            'softDelete'
-        ]
-        read_only_fields = ['id', 'commerceId']
-
-
-class CourtCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Court
         fields = [
@@ -71,8 +46,10 @@ class CourtCreateUpdateSerializer(serializers.ModelSerializer):
             'commerceId',
             'name',
             'description',
-            'courtTypeId',
-            'groundTypeId',
+            'courtTypeId', # write only maybe
+            'courtType',
+            'groundTypeId', # write only maybe
+            'groundType',
             'price',
             'lightPrice',
             'lightHour',
@@ -81,3 +58,7 @@ class CourtCreateUpdateSerializer(serializers.ModelSerializer):
             'softDelete'
         ]
         read_only_fields = ['id']
+        extra_kwargs = {
+            'softDelete': { 'write_only': True },
+            'commerceId': { 'write_only': True },
+        }
