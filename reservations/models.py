@@ -78,6 +78,6 @@ class Reservation(models.Model):
         if self.clientId is not None:
             client = str(self.clientId)
         else:
-            client = slef.clientName
+            client = self.clientName
 
         return str(self.commerceId) + ' - ' + client + ' - ' + str(self.startDate.strftime('%d/%m/%y')) + ' - ' + str(self.stateId)

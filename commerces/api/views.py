@@ -82,6 +82,9 @@ class CommerceRetrieveUpdateDestroyAPIView(generics.UpdateAPIView, generics.Dest
     serializer_class = CommerceSerializer
     lookup_url_kwarg = 'commerceId'
 
+    def is_param_valid(self, param):
+        return param != '' and param is not None
+
     def get_queryset(self):
         return Commerce.objects.filter(softDelete__isnull=True)
 
@@ -92,16 +95,30 @@ class CommerceRetrieveUpdateDestroyAPIView(generics.UpdateAPIView, generics.Dest
         serializer = self.serializer_class(commerce, data={ 'softDelete': delete_date }, partial=True)
 
         if serializer.is_valid():
-            serializer.save()
+            # delete employees, courts, services and schedules
             Employee.objects.filter(softDelete__isnull=True, commerceId=commerceId).update(softDelete=delete_date)
             Court.objects.filter(softDelete__isnull=True, commerceId=commerceId).update(softDelete=delete_date)
             Service.objects.filter(softDelete__isnull=True, commerceId=commerceId).update(softDelete=delete_date)
             schedules = Schedule.objects.filter(softDelete__isnull=True, commerceId=commerceId)
-            schedules.update(softDelete=delete_date)
             WorkShift.objects.filter(softDelete__isnull=True, scheduleId__in=schedules).update(softDelete=delete_date)
+            schedules.update(softDelete=delete_date)
             Profile.objects.filter(softDelete__isnull=True, commerceId=commerceId).update(commerceId=None)
-            state = ReservationState.objects.get(id='canceled')
-            Reservation.objects.filter(cancellationDate__isnull=True, commerceId=commerceId, endDate__gt=delete_date).update(stateId=state, cancellationDate=delete_date)
+            
+            # cancel reservations
+            reservations_id = self.request.query_params.get('reservationsToCancel', None)
+
+            if self.is_param_valid(reservations_id):
+                reservations_id = map(lambda id: int(id), reservations_id.split(','))
+                state = ReservationState.objects.get(id='canceled')
+
+                reservations = Reservation.objects.filter(cancellationDate__isnull=True, id__in=reservations_id, commerceId=commerceId)
+
+                paid_reservations = reservations.filter(paymentId__isnull=False).values_list('paymentId')
+                payments = Payment.objects.filter(id__in=paid_reservations, refundDate__isnull=True).update(refundDate=delete_date)
+
+                reservations.update(cancellationDate=delete_date, stateId=state)
+
+            serializer.save()
             
             return JsonResponse(data=serializer.data, status=201)
 
