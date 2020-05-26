@@ -41,10 +41,40 @@ class CourtCreateRetrieveUpdateDestroyAPIView(generics.CreateAPIView, generics.R
     def get_queryset(self):
         return Court.objects.filter(softDelete__isnull=True)
 
+    def court_name_exists(self, id, name, commerceId):
+        qs = Court.objects.filter(name=name, commerceId=commerceId)
+
+        if id is not None:
+            qs = qs.exclude(id=id)
+
+        return qs.count() >= 1
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+
+        commerceId = request.data['commerceId']
+        name = request.data['name']
+
+        if self.court_name_exists(None, name, commerceId):
+            return JsonResponse(data={ 'on_court_exists': True })
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return JsonResponse(data=serializer.data, status=201)
+
+        return JsonResponse(status=400)
+
     @transaction.atomic
     def update(self, request, id, *args, **kwargs):
         court = Court.objects.get(id=id)
         serializer = self.serializer_class(court, data=request.data, partial=True)
+
+        name = request.data['name']
+        commerceId = court.commerceId.id
+
+        if self.court_name_exists(id, name, commerceId):
+            return JsonResponse(data={ 'on_court_exists': True })
 
         if serializer.is_valid():
             if 'reservationsToCancel' in request.data and len(request.data['reservationsToCancel']):
@@ -62,7 +92,7 @@ class CourtCreateRetrieveUpdateDestroyAPIView(generics.CreateAPIView, generics.R
 
             return JsonResponse(data=serializer.data, status=201)
 
-        return JsonResponse(data='wrong parameters', status=400, safe=False)
+        return JsonResponse(status=400)
 
     @transaction.atomic
     def delete(self, request, id):
