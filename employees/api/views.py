@@ -98,4 +98,4 @@ class EmployeeCreateRetrieveUpdateDestroyAPIView(generics.CreateAPIView, generic
 
             return JsonResponse(data=serializer.data, status=201)
 
-        return JsonResponse(data="wrong parameters", status=400, safe=False)
+        return JsonResponse(status=400)

@@ -42,7 +42,7 @@ class CourtCreateRetrieveUpdateDestroyAPIView(generics.CreateAPIView, generics.R
         return Court.objects.filter(softDelete__isnull=True)
 
     def court_name_exists(self, id, name, commerceId):
-        qs = Court.objects.filter(name=name, commerceId=commerceId)
+        qs = self.get_queryset().filter(name=name, commerceId=commerceId)
 
         if id is not None:
             qs = qs.exclude(id=id)
@@ -118,7 +118,7 @@ class CourtCreateRetrieveUpdateDestroyAPIView(generics.CreateAPIView, generics.R
 
             return JsonResponse(data=serializer.data, status=201)
 
-        return JsonResponse(data='wrong parameters', status=400, safe=False)
+        return JsonResponse(status=400)
 
 
 class CourtTypeListAPIView(generics.ListAPIView):

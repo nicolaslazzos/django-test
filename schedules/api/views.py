@@ -111,7 +111,7 @@ class ScheduleCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView
 
             return JsonResponse(data=serializer.data, status=201)
 
-        return JsonResponse(data='wrong parameters', status=400, safe=False)
+        return JsonResponse(status=400)
 
     @transaction.atomic
     def update(self, request, id, *args, **kwargs):
@@ -132,7 +132,7 @@ class ScheduleCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIView
                 
             return JsonResponse(data=serializer.data, status=201)
                     
-        return JsonResponse(data='wrong parameters', status=400, safe=False)
+        return JsonResponse(status=400)
 
 
 class WorkShiftListAPIView(generics.ListAPIView):

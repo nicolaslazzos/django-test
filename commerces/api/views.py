@@ -75,7 +75,7 @@ class CommerceCreateAPIView(generics.CreateAPIView):
 
             return JsonResponse(data={ 'commerceId': commerce.id, 'employeeId': employee.id }, status=201)
 
-        return JsonResponse(data='wrong parameters', status=400, safe=False)
+        return JsonResponse(status=400)
 
 
 class CommerceRetrieveUpdateDestroyAPIView(generics.UpdateAPIView, generics.DestroyAPIView, generics.RetrieveAPIView):
@@ -122,7 +122,7 @@ class CommerceRetrieveUpdateDestroyAPIView(generics.UpdateAPIView, generics.Dest
             
             return JsonResponse(data=serializer.data, status=201)
 
-        return JsonResponse(data='wrong parameters', status=400, safe=False)
+        return JsonResponse(status=400)
 
 
 # AREAS

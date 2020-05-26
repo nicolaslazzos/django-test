@@ -132,7 +132,7 @@ class ReviewCreateRetrieveUpdateDestroyAPIView(generics.CreateAPIView, generics.
 
             return JsonResponse(data=serializer.data, status=201)
 
-        return JsonResponse(data='wrong parameters', status=400, safe=False)
+        return JsonResponse(status=400)
 
     @transaction.atomic
     def update(self, request, id, *args, **kwargs):
@@ -156,7 +156,7 @@ class ReviewCreateRetrieveUpdateDestroyAPIView(generics.CreateAPIView, generics.
 
             return JsonResponse(data=serializer.data, status=201)
 
-        return JsonResponse(data='wrong parameters', status=400, safe=False)
+        return JsonResponse(status=400)
 
     @transaction.atomic
     def delete(self, request, id):
@@ -187,4 +187,4 @@ class ReviewCreateRetrieveUpdateDestroyAPIView(generics.CreateAPIView, generics.
 
             return JsonResponse(data=serializer.data, status=201)
 
-        return JsonResponse(data='wrong parameters', status=400, safe=False)
+        return JsonResponse(status=400)
