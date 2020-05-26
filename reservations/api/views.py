@@ -73,8 +73,44 @@ class ReservationCreateUpdateAPIView(generics.CreateAPIView, generics.UpdateAPIV
     serializer_class = ReservationCreateUpdateSerializer
     lookup_field = 'id'
 
+    def get_prop(self, prop, data):
+        if prop in data and data[prop] is not None and data[prop] != '':
+            return data[prop]
+        else:
+            return None
+
     def get_queryset(self):
         return Reservation.objects.filter(cancellationDate__isnull=True)
+
+    def reservation_exists(self, commerceId, employeeId, courtId, startDate, endDate):
+        qs = self.get_queryset().filter(commerceId=commerceId, startDate__lt=endDate, endDate__gt=startDate)
+
+        if employeeId is not None:
+            qs = qs.filter(employeeId=employeeId)
+
+        if courtId is not None:
+            qs = qs.filter(courtId=courtId)
+
+        return qs.count() >= 1
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            commerceId = self.get_prop('commerceId', request.data)
+            employeeId = self.get_prop('employeeId', request.data)
+            courtId = self.get_prop('courtId', request.data)
+            startDate = self.get_prop('startDate', request.data)
+            endDate = self.get_prop('endDate', request.data)
+
+            if self.reservation_exists(commerceId, employeeId, courtId, startDate, endDate):
+                return JsonResponse(data={ 'on_reservation_exists': True })
+
+            serializer.save()
+
+            return JsonResponse(data=serializer.data, status=201)
+
+        return JsonResponse(status=400)
 
 
 class ReviewListAPIView(generics.ListAPIView):
